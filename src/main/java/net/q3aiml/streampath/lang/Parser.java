@@ -131,7 +131,7 @@ public class Parser extends ParserBase<Expression<?, ?>> {
                                         AdditiveExpression()
                                 )
                         ),
-                        EMPTY)
+                        EMPTY
                 ),
                 Terminal(")")
         );
