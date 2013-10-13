@@ -1,16 +1,18 @@
 package net.q3aiml.streampath.lang;
 
+import net.q3aiml.streampath.ast.literal.*;
 import org.parboiled.BaseParser;
 import org.parboiled.Rule;
 import org.parboiled.annotations.DontLabel;
 import org.parboiled.annotations.MemoMismatches;
 import org.parboiled.annotations.SuppressNode;
 import org.parboiled.annotations.SuppressSubnodes;
+import net.q3aiml.streampath.ast.StreamPathNode;
 
 /**
  * @author q3aiml
  */
-public class ParserBase extends BaseParser {
+public class ParserBase<T extends StreamPathNode> extends BaseParser<StreamPathNode> {
 
     Rule Literal() {
         return Sequence(
@@ -25,14 +27,14 @@ public class ParserBase extends BaseParser {
     }
 
     Rule NullLiteral() {
-        return Sequence("null", TestNot(LetterOrDigit()));
+        return Sequence("null", TestNot(LetterOrDigit()), push(new SymbolLiteral(Symbol.NULL)));
     }
 
     @SuppressSubnodes
     Rule BooleanLiteral() {
         return FirstOf(
-                Sequence("true", TestNot(LetterOrDigit())),
-                Sequence("false", TestNot(LetterOrDigit()))
+                Sequence("true", TestNot(LetterOrDigit()), push(new BooleanLiteral(true))),
+                Sequence("false", TestNot(LetterOrDigit()), push(new BooleanLiteral(false)))
         );
     }
 
@@ -46,6 +48,7 @@ public class ParserBase extends BaseParser {
                                 Sequence(TestNot(AnyOf("\r\n\"\\")), ANY)
                         )
                 ).suppressSubnodes(),
+                push(new StringLiteral(match())),
                 '"'
         );
     }
@@ -56,10 +59,13 @@ public class ParserBase extends BaseParser {
 
     @SuppressSubnodes
     Rule NumberLiteral() {
-        return FirstOf(
-                Sequence(OneOrMore(Digit()), '.', ZeroOrMore(Digit())),
-                Sequence('.', OneOrMore(Digit())),
-                OneOrMore(Digit())
+        return Sequence(
+                FirstOf(
+                        Sequence(OneOrMore(Digit()), '.', ZeroOrMore(Digit())),
+                        Sequence('.', OneOrMore(Digit())),
+                        OneOrMore(Digit())
+                ),
+                push(new NumberLiteral(match()))
         );
     }
 
