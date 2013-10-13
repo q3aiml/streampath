@@ -1,15 +1,28 @@
 package net.q3aiml.streampath.lang;
 
+import net.q3aiml.streampath.ast.Expression;
+import net.q3aiml.streampath.ast.arithmetic.ArithmeticExpression;
+import net.q3aiml.streampath.ast.literal.Literal;
+import net.q3aiml.streampath.ast.logic.BinaryBooleanExpression;
+import net.q3aiml.streampath.ast.logic.EqualityExpression;
+import net.q3aiml.streampath.ast.logic.NumericComparisonExpression;
+import net.q3aiml.streampath.ast.logic.UnaryBooleanExpression;
 import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 import org.parboiled.annotations.SuppressSubnodes;
+import org.parboiled.common.Factory;
+import org.parboiled.support.Var;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author q3aiml
  */
 @BuildParseTree
 @SuppressWarnings("InfiniteRecursion")
-public class Parser extends ParserBase {
+public class Parser extends ParserBase<Expression<?, ?>> {
 
     public Rule Expression() {
         return Sequence(
@@ -19,20 +32,24 @@ public class Parser extends ParserBase {
     }
 
     Rule BooleanExpression() {
+        Var<String> op = new Var<String>();
         return Sequence(
                 UnaryBooleanExpression(),
                 ZeroOrMore(
-                        FirstOf(AND, OR),
-                        UnaryBooleanExpression()
+                        FirstOf(AND, OR), op.set(match()),
+                        UnaryBooleanExpression(),
+                        push(new BinaryBooleanExpression(op.get().trim(), (Expression)pop(1), (Expression)pop()))
                 )
         );
     }
 
     Rule UnaryBooleanExpression() {
+        Var<String> op = new Var<String>();
         return FirstOf(
                 Sequence(
-                        NOT,
-                        EqualityExpression()
+                        NOT, op.set(match()),
+                        EqualityExpression(),
+                        push(new UnaryBooleanExpression(op.get().trim(), (Expression)pop()))
                 ),
                 EqualityExpression()
         );
@@ -40,43 +57,51 @@ public class Parser extends ParserBase {
 
     // == and !=
     Rule EqualityExpression() {
+        Var<String> op = new Var<String>();
         return Sequence(
                 RelationalExpression(),
                 ZeroOrMore(
-                        FirstOf(EQUAL, NOTEQUAL),
-                        RelationalExpression()
+                        FirstOf(EQUAL, NOTEQUAL), op.set(match()),
+                        RelationalExpression(),
+                        push(new EqualityExpression(op.get().trim(), (Expression)pop(1), (Expression)pop()))
                 )
         );
     }
 
     // >, <, ...
     Rule RelationalExpression() {
+        Var<String> op = new Var<String>();
         return Sequence(
                 AdditiveExpression(),
                 ZeroOrMore(
-                        FirstOf(LE, GE, LT, GT),
-                        AdditiveExpression()
+                        FirstOf(LE, GE, LT, GT), op.set(match()),
+                        AdditiveExpression(),
+                        push(new NumericComparisonExpression(op.get().trim(), (Expression)pop(1), (Expression)pop()))
                 )
         );
     }
 
     // + -
     Rule AdditiveExpression() {
+        Var<String> op = new Var<String>();
         return Sequence(
                 MultiplicativeExpression(),
                 ZeroOrMore(
-                        FirstOf(PLUS, MINUS),
-                        MultiplicativeExpression()
+                        FirstOf(PLUS, MINUS), op.set(match()),
+                        MultiplicativeExpression(),
+                        push(new ArithmeticExpression(op.get().trim(), (Expression)pop(1), (Expression)pop()))
                 )
         );
     }
 
     Rule MultiplicativeExpression() {
+        Var<String> op = new Var<String>();
         return Sequence(
                 Term(),
                 ZeroOrMore(
-                        FirstOf(STAR, SLASH),
-                        Term()
+                        FirstOf(STAR, SLASH), op.set(match()),
+                        Term(),
+                        push(new ArithmeticExpression(op.get().trim(), (Expression)pop(1), (Expression)pop()))
                 )
         );
     }
