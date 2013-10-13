@@ -3,6 +3,7 @@ package net.q3aiml.streampath.lang;
 import com.google.common.base.Strings;
 import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.Expression;
+import net.q3aiml.streampath.evaluator.Frame;
 import org.parboiled.Parboiled;
 import org.parboiled.errors.ErrorUtils;
 import org.parboiled.parserunners.ReportingParseRunner;
@@ -36,7 +37,12 @@ public class ParserCliTester {
         String parseTreePrintOut = ParseTreeUtils.printNodeTree(result);
         if (!result.hasErrors()) {
             System.out.println(parseTreePrintOut);
-            System.out.println("value! " + input + " -> " + result.parseTreeRoot.getValue().getValue(new Context() {}));
+            System.out.println("value! " + input + " -> " + result.parseTreeRoot.getValue().getValue(new Context() {
+                @Override
+                public Frame frame() {
+                    return null;
+                }
+            }));
             System.out.println();
         } else {
             System.out.println(input);
