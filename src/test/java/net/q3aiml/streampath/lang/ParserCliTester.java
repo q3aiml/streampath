@@ -1,6 +1,8 @@
 package net.q3aiml.streampath.lang;
 
 import com.google.common.base.Strings;
+import net.q3aiml.streampath.ast.Context;
+import net.q3aiml.streampath.ast.Expression;
 import org.parboiled.Parboiled;
 import org.parboiled.errors.ErrorUtils;
 import org.parboiled.parserunners.ReportingParseRunner;
@@ -30,10 +32,11 @@ public class ParserCliTester {
     }
 
     public void parseAndPrint(String input) throws IOException {
-        ParsingResult result = new ReportingParseRunner(parser.Expression()).run(input);
+        ParsingResult<Expression<?, ?>> result = new ReportingParseRunner(parser.Expression()).run(input);
         String parseTreePrintOut = ParseTreeUtils.printNodeTree(result);
         if (!result.hasErrors()) {
             System.out.println(parseTreePrintOut);
+            System.out.println("value! " + input + " -> " + result.parseTreeRoot.getValue().getValue(new Context() {}));
             System.out.println();
         } else {
             System.out.println(input);
