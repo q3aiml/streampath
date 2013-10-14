@@ -1,7 +1,10 @@
 package net.q3aiml.streampath;
 
+import com.google.common.collect.ImmutableSet;
 import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.Expression;
+import net.q3aiml.streampath.evaluator.EvaluationResult;
+import net.q3aiml.streampath.evaluator.Evaluator;
 import net.q3aiml.streampath.evaluator.Frame;
 import net.q3aiml.streampath.lang.Parser;
 import org.parboiled.Parboiled;
@@ -24,18 +27,16 @@ public abstract class ExpressionTestBase {
     }
 
     public Object eval(String expression, Source... documents) throws IOException, InvalidExpressionException {
-        ParsingResult<Expression> parseResult = new ReportingParseRunner(parser.Expression()).run(expression);
+        ParsingResult<Expression<?, ?>> parseResult = new ReportingParseRunner(parser.Expression()).run(expression);
         String parseTreePrintOut = ParseTreeUtils.printNodeTree(parseResult);
         if (!parseResult.hasErrors()) {
             System.out.println(parseTreePrintOut);
 
-            final Object result = parseResult.parseTreeRoot.getValue().getValue(new Context() {
-                @Override
-                public Frame frame() {
-                    return null;
-                }
-            });
-            System.out.println("evaluator value! " + expression + " -> " + result);
+            Expression<?, ?> compiledExpression = parseResult.parseTreeRoot.getValue();
+            Evaluator evaluator = new Evaluator(DocumentSets.ofSources(documents), ImmutableSet.of(compiledExpression));
+            EvaluationResult results = evaluator.evaluate();
+            Object result = results.result(compiledExpression);
+            System.out.println("evaluator value! " + compiledExpression + " -> " + result);
 
             System.out.println();
 

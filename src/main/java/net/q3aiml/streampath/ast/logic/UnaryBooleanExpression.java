@@ -40,6 +40,11 @@ public class UnaryBooleanExpression extends BooleanExpression<Boolean> {
     }
 
     @Override
+    public boolean isConstant() {
+        return operand.isConstant();
+    }
+
+    @Override
     public String toString() {
         return operation + " " + operand;
     }

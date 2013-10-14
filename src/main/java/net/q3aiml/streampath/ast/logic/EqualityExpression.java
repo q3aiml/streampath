@@ -44,6 +44,11 @@ public class EqualityExpression extends BooleanExpression<Comparable> {
     }
 
     @Override
+    public boolean isConstant() {
+        return left.isConstant() && right.isConstant();
+    }
+
+    @Override
     public String toString() {
         return left + " " + operation + " " + right;
     }

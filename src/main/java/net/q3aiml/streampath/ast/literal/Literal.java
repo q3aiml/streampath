@@ -13,4 +13,9 @@ public abstract class Literal<T> implements Expression<T, Void> {
     public List<? extends Expression> children() {
         return ImmutableList.of();
     }
+
+    @Override
+    public boolean isConstant() {
+        return true;
+    }
 }

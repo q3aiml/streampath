@@ -1,18 +1,24 @@
 package net.q3aiml.streampath.lang;
 
+import com.google.common.collect.ImmutableMap;
 import net.q3aiml.streampath.ast.Expression;
+import net.q3aiml.streampath.ast.FunctionFactory;
+import net.q3aiml.streampath.ast.aggregate.AggregateModule;
 import net.q3aiml.streampath.ast.arithmetic.ArithmeticExpression;
-import net.q3aiml.streampath.ast.literal.Literal;
 import net.q3aiml.streampath.ast.logic.BinaryBooleanExpression;
 import net.q3aiml.streampath.ast.logic.EqualityExpression;
 import net.q3aiml.streampath.ast.logic.NumericComparisonExpression;
 import net.q3aiml.streampath.ast.logic.UnaryBooleanExpression;
+import net.q3aiml.streampath.ast.selector.Selector;
+import net.q3aiml.streampath.ast.selector.ValueSelector;
+import net.q3aiml.streampath.ast.selector.value.*;
 import org.parboiled.Rule;
 import org.parboiled.annotations.BuildParseTree;
 import org.parboiled.annotations.SuppressSubnodes;
 import org.parboiled.common.Factory;
 import org.parboiled.support.Var;
 
+import javax.xml.namespace.QName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +29,15 @@ import java.util.Map;
 @BuildParseTree
 @SuppressWarnings("InfiniteRecursion")
 public class Parser extends ParserBase<Expression<?, ?>> {
+    private final Map<String, FunctionFactory> functions;
+
+    public Parser() {
+        this(AggregateModule.defaultFunctionFactories());
+    }
+
+    public Parser(Map<String, FunctionFactory> functions) {
+        this.functions = functions;
+    }
 
     public Rule Expression() {
         return Sequence(
@@ -115,26 +130,43 @@ public class Parser extends ParserBase<Expression<?, ?>> {
     }
 
     Rule Function() {
+        Var<String> op = new Var<String>();
+        Var<List<Expression<?, ?>>> args = new Var<List<Expression<?, ?>>>(new Factory<List<Expression<?, ?>>>() {
+            @Override
+            public List<Expression<?, ?>> create() {
+                return new ArrayList<Expression<?, ?>>();
+            }
+        });
         return Sequence(
                 FirstOf(
                         Terminal("min"),
                         Terminal("max"),
                         Terminal("sum"),
                         Terminal("count")
-                ),
+                ), op.set(match()),
                 Terminal("("),
                 FirstOf(
                         Sequence(
-                                AdditiveExpression(),
+                                AdditiveExpression(), args.get().add((Expression)pop()),
                                 ZeroOrMore(
                                         Terminal(","),
-                                        AdditiveExpression()
+                                        AdditiveExpression(), args.get().add((Expression)pop())
                                 )
                         ),
                         EMPTY
                 ),
-                Terminal(")")
+                Terminal(")"),
+                push(createFunction(op.get().trim(), args.get()))
         );
+    }
+
+    protected Expression<?,?> createFunction(String name, List<Expression<?, ?>> arguments) {
+        final FunctionFactory functionFactory = functions.get(name);
+        if (functionFactory == null) {
+            throw new IllegalArgumentException("unknown function '" + name + "'"
+                    + ", valid functions: " + functions.keySet());
+        }
+        return functionFactory.create(arguments);
     }
 
     Rule Selector() {
@@ -147,6 +179,7 @@ public class Parser extends ParserBase<Expression<?, ?>> {
                         EMPTY
                 ),
                 ValueSelector(),
+                push(new Selector(null, (ValueSelector)pop())),
                 Spacing()
         );
     }
@@ -172,16 +205,24 @@ public class Parser extends ParserBase<Expression<?, ?>> {
     }
 
     Rule ValueSelector() {
-        return FirstOf(
-                Sequence(
-                        "//",
-                        ValueStep()
+        return Sequence(
+                FirstOf(
+                        Sequence(
+                                "//",
+                                push(new DescendantOrSelf(new SelectRoot())),
+                                ValueStep()
+                        ),
+                        Sequence(
+                                '/',
+                                push(new SelectRoot()),
+                                Optional(ValueStep())
+                        ),
+                        Sequence(
+                                push(new SelectRelative()),
+                                ValueStep()
+                        )
                 ),
-                Sequence(
-                        '/',
-                        Optional(ValueStep())
-                ),
-                ValueStep()
+                push(new ValueSelector((ValueSelectorNode)pop()))
         );
     }
 
@@ -192,6 +233,7 @@ public class Parser extends ParserBase<Expression<?, ?>> {
                         FirstOf(
                                 Sequence(
                                         "//",
+                                        push(new DescendantOrSelf((ValueSelectorNode)pop())),
                                         SelectSomething()
                                 ),
                                 Sequence(
@@ -215,7 +257,8 @@ public class Parser extends ParserBase<Expression<?, ?>> {
     Rule SelectAttribute() {
         return Sequence(
                 '@',
-                OneOrMore(LetterOrDigit())
+                OneOrMore(LetterOrDigit()),
+                push(new SelectAttribute((ValueSelectorNode)pop(), QName.valueOf(match())))
         );
     }
 
@@ -223,19 +266,24 @@ public class Parser extends ParserBase<Expression<?, ?>> {
     Rule SelectChildren() {
         return Sequence(
                 OneOrMore(LetterOrDigit()),
+                push(new SelectChildren((ValueSelectorNode)pop(), match())),
                 Optional(ValueSelectorPredicate())
         );
     }
 
     @SuppressSubnodes
     Rule SelectParent() {
-        return Terminal("..");
+        return Sequence(
+                "..",
+                push(new SelectParent((ValueSelectorNode)pop()))
+        );
     }
 
     Rule ValueSelectorPredicate() {
         return Sequence(
                 Terminal("["),
                 BooleanExpression(),
+                push(PredicateFilter.matching((ValueSelectorNode)pop(1), (Expression)pop())),
                 ']'
         );
     }

@@ -47,6 +47,11 @@ public class ArithmeticExpression implements Expression<BigDecimal, BigDecimal> 
     }
 
     @Override
+    public boolean isConstant() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return left + " " + operation + " " + right;
     }

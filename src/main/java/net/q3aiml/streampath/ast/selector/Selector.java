@@ -47,6 +47,11 @@ public class Selector implements Expression<Object, Object>, SelectorBase {
     }
 
     @Override
+    public boolean isConstant() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return (documentSelector != null ? documentSelector + "::" : "" ) + valueSelector;
     }

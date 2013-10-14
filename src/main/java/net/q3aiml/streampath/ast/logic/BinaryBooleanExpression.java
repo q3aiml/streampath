@@ -42,6 +42,11 @@ public class BinaryBooleanExpression extends BooleanExpression<Boolean> {
     }
 
     @Override
+    public boolean isConstant() {
+        return left.isConstant() && right.isConstant();
+    }
+
+    @Override
     public String toString() {
         return left + " " + operation + " " + right;
     }

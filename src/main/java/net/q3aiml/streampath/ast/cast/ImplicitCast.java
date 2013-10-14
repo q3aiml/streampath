@@ -33,6 +33,11 @@ public abstract class ImplicitCast<T> implements Expression<T, Object> {
         return type.getTypeClass();
     }
 
+    @Override
+    public boolean isConstant() {
+        return operand.isConstant();
+    }
+
     public static Expression<BigDecimal, ?> numeric(Expression operand) {
         if (operand.getValueType() == BigDecimal.class) {
             //noinspection unchecked
