@@ -11,4 +11,8 @@ public class StreamPathException extends Exception {
     public StreamPathException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    public StreamPathException(Throwable cause) {
+        super(cause);
+    }
 }

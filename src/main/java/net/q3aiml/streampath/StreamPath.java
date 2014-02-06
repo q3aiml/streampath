@@ -47,18 +47,29 @@ public class StreamPath {
         return parser;
     }
 
+    @SuppressWarnings("DuplicateThrows")
     public StreamPathResult evaluate(DocumentSet documentSet, final Set<String> expressions)
-            throws IOException, InvalidExpressionException
+            throws IOException, InvalidExpressionException, InvalidDocumentException, StreamPathException
     {
         return evaluate(documentSet, expressions, false);
     }
 
+    @SuppressWarnings("DuplicateThrows")
     public StreamPathResult evaluate(DocumentSet documentSet, Set<String> expressions, boolean verbose)
-            throws IOException, InvalidExpressionException
+            throws IOException, InvalidExpressionException, InvalidDocumentException, StreamPathException
     {
         BiMap<String, Expression<?, ?>> compiledExpressions = compile(expressions);
         Evaluator evaluator = new Evaluator(documentSet, compiledExpressions.values());
-        final EvaluationResult result = evaluator.evaluate(verbose);
+        final EvaluationResult result;
+        try {
+            result = evaluator.evaluate(verbose);
+        } catch (RuntimeException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof StreamPathException) {
+                throw (StreamPathException)cause;
+            }
+            throw e;
+        }
 
         if (verbose) {
             expressions = new HashSet<String>(expressions);
