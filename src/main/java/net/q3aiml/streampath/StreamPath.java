@@ -105,8 +105,15 @@ public class StreamPath {
             log.debug("parse tree for " + expression + ":\n" + parseTreePrintOut);
             return result.parseTreeRoot.getValue();
         } else {
-            throw new InvalidExpressionException("error parsing " + expression + ": ",
-                    ErrorUtils.printParseErrors(result.parseErrors));
+            Integer startIndex = null;
+            Integer endIndex = null;
+            if (result.parseErrors.size() > 0) {
+                ParseError parseError = result.parseErrors.get(0);
+                startIndex = parseError.getStartIndex();
+                endIndex = parseError.getEndIndex();
+            }
+            throw new InvalidExpressionException(expression,
+                    ErrorUtils.printParseErrors(result.parseErrors), startIndex, endIndex);
         }
     }
 }
