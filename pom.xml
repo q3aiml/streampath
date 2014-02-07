@@ -10,9 +10,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.parboiled</groupId>
+            <groupId>streampath</groupId>
             <artifactId>parboiled-java</artifactId>
-            <version>1.1.6</version>
+            <version>1.1.6-SNAPSHOT</version>
         </dependency>
 
         <dependency>
