@@ -1,6 +1,8 @@
 package net.q3aiml.streampath.evaluator;
 
 import com.google.common.collect.AbstractIterator;
+import net.q3aiml.streampath.Document;
+import net.q3aiml.streampath.InvalidDocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,30 +25,39 @@ public class DocumentFrameXMLEventReader {
     private static final Logger log = LoggerFactory.getLogger(DocumentFrameXMLEventReader.class);
 
     public Iterable<Frame> read(XMLEventReader reader) throws XMLStreamException {
-        return new DocumentFrameReaderIterable(reader);
+        return new DocumentFrameReaderIterable(reader, null);
+    }
+
+    public Iterable<Frame> read(XMLEventReader reader, Document document) throws XMLStreamException {
+        return new DocumentFrameReaderIterable(reader, document);
     }
 
     private static class DocumentFrameReaderIterable implements Iterable<Frame> {
         private final XMLEventReader reader;
+        private final Document document;
 
-        private DocumentFrameReaderIterable(XMLEventReader reader) {
+        private DocumentFrameReaderIterable(XMLEventReader reader, Document document) {
             this.reader = reader;
+            this.document = document;
         }
 
         @Override
         public Iterator<Frame> iterator() {
-            return new DocumentFrameReaderIterator(reader);
+            return new DocumentFrameReaderIterator(reader, document);
         }
     }
 
     private static class DocumentFrameReaderIterator extends AbstractIterator<Frame> {
         private final XMLEventReader reader;
+        private final Document document;
 
-        StackFrame stack = new StackFrame();
+        StackFrame stack;
         StringBuffer content = null;
 
-        private DocumentFrameReaderIterator(XMLEventReader reader) {
+        private DocumentFrameReaderIterator(XMLEventReader reader, Document document) {
             this.reader = reader;
+            this.document = document;
+            stack = new StackFrame(document);
         }
 
         @Override
@@ -61,7 +72,7 @@ public class DocumentFrameXMLEventReader {
 
                 if (event.isStartElement()) {
                     StartElement startElement = event.asStartElement();
-                    stack = new StackFrame(stack, startElement);
+                    stack = new StackFrame(document, stack, startElement);
                     content = new StringBuffer();
                 } else if (event.isEndElement()) {
                     StackFrame currentStack = stack;
@@ -90,18 +101,26 @@ public class DocumentFrameXMLEventReader {
     }
 
     private static class StackFrame implements Frame {
+        private final Document document;
         private final StackFrame parent;
         private final StartElement startElement;
         private String contents;
 
-        public StackFrame() {
+        public StackFrame(Document document) {
+            this.document = document;
             this.parent = null;
             this.startElement = null;
         }
 
-        public StackFrame(StackFrame parent, StartElement startElement) {
+        public StackFrame(Document document, StackFrame parent, StartElement startElement) {
+            this.document = document;
             this.parent = parent;
             this.startElement = checkNotNull(startElement, "startElement must not be null");
+        }
+
+        @Override
+        public Document document() {
+            return document;
         }
 
         @Override

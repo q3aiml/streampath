@@ -1,14 +1,15 @@
 package net.q3aiml.streampath.lang;
 
-import com.google.common.collect.ImmutableMap;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.FunctionFactory;
 import net.q3aiml.streampath.ast.aggregate.AggregateModule;
 import net.q3aiml.streampath.ast.arithmetic.ArithmeticExpression;
+import net.q3aiml.streampath.ast.literal.Literal;
 import net.q3aiml.streampath.ast.logic.BinaryBooleanExpression;
 import net.q3aiml.streampath.ast.logic.EqualityExpression;
 import net.q3aiml.streampath.ast.logic.NumericComparisonExpression;
 import net.q3aiml.streampath.ast.logic.UnaryBooleanExpression;
+import net.q3aiml.streampath.ast.selector.DocumentSelector;
 import net.q3aiml.streampath.ast.selector.Selector;
 import net.q3aiml.streampath.ast.selector.ValueSelector;
 import net.q3aiml.streampath.ast.selector.value.*;
@@ -176,31 +177,42 @@ public class Parser extends ParserBase<Expression<?, ?>> {
                                 DocumentSelector(),
                                 Terminal("::")
                         ),
-                        EMPTY
+                        Sequence(
+                            EMPTY,
+                            push(new DocumentSelector())
+                        )
                 ),
                 ValueSelector(),
-                push(new Selector(null, (ValueSelector)pop())),
+                push(new Selector((DocumentSelector)pop(1), (ValueSelector)pop())),
                 Spacing()
         );
     }
 
     Rule DocumentSelector() {
+        Var<String> selector = new Var<String>();
+        Var<List<Literal>> args = new Var<List<Literal>>(new Factory<List<Literal>>() {
+            @Override
+            public List<Literal> create() {
+                return new ArrayList<Literal>();
+            }
+        });
         return Sequence(
-                OneOrMore(LetterOrDigit()),
+                OneOrMore(LetterOrDigit()), selector.set(match()),
                 Optional(
                         '(',
                         FirstOf(
                                 Sequence(
-                                        Literal(),
+                                        Literal(), args.get().add((Literal)pop()),
                                         ZeroOrMore(
                                                 Terminal(","),
-                                                Literal()
+                                                Literal(), args.get().add((Literal)pop())
                                         )
                                 ),
                                 EMPTY
                         ),
                         ')'
-                )
+                ),
+                push(new DocumentSelector(selector.get(), args.get()))
         );
     }
 

@@ -2,15 +2,17 @@ package net.q3aiml.streampath.evaluator;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import net.q3aiml.streampath.ast.aggregate.Aggregator;
-import net.q3aiml.streampath.ast.aggregate.AggregatorNode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.StreamPathNode;
+import net.q3aiml.streampath.ast.aggregate.Aggregator;
+import net.q3aiml.streampath.ast.aggregate.AggregatorNode;
+import net.q3aiml.streampath.ast.selector.DocumentSelector;
 import net.q3aiml.streampath.ast.selector.Selector;
 import net.q3aiml.streampath.ast.selector.ValueSelector;
 import net.q3aiml.streampath.ast.selector.value.FrameContext;
+import net.q3aiml.streampath.ast.selector.value.ValueSelectorNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -30,16 +32,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /*package*/ class Aggregator3000 {
     private static final Logger log = LoggerFactory.getLogger(Aggregator3000.class);
 
-    private final ImmutableSet<ValueSelectorAggregateState> aggregators;
+    private final ImmutableSet<SelectorAggregateState> aggregators;
 
     public Aggregator3000(Iterable<? extends Expression<?, ?>> expressions) {
         this(findNonConstantAggregatorNodes(expressions, new HashSet<AggregatorNode>()));
     }
 
     public Aggregator3000(Set<AggregatorNode> aggregatorNodes) {
-        ImmutableSet.Builder<ValueSelectorAggregateState> aggregators = ImmutableSet.builder();
+        ImmutableSet.Builder<SelectorAggregateState> aggregators = ImmutableSet.builder();
         for (AggregatorNode aggregatorNode : aggregatorNodes) {
-            aggregators.add(new ValueSelectorAggregateState(aggregatorNode));
+            aggregators.add(new SelectorAggregateState(aggregatorNode));
         }
         this.aggregators = aggregators.build();
     }
@@ -65,7 +67,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
     }
 
     public void frame(Frame frame) {
-        for (ValueSelectorAggregateState aggregator : aggregators) {
+        for (SelectorAggregateState aggregator : aggregators) {
             aggregator.frame(frame);
         }
     }
@@ -77,43 +79,47 @@ import static com.google.common.base.Preconditions.checkNotNull;
                 '}';
     }
 
-    public ValueSelectorAggregateState getValueSelectorNodeState(ValueSelector node) {
-        for (ValueSelectorAggregateState aggregatorNodeState : aggregators) {
-            if (aggregatorNodeState.valueSelectors.valueSelector == node) {
+    public SelectorAggregateState getValueSelectorNodeState(Selector node) {
+        for (SelectorAggregateState aggregatorNodeState : aggregators) {
+            if (aggregatorNodeState.selectorWrapper.selector == node) {
                 return aggregatorNodeState;
             }
         }
         throw new IllegalArgumentException("value selector not known to aggregator: " + node);
     }
 
-    /*protected*/ static class ValueSelectorAggregateState {
+    /*protected*/ static class SelectorAggregateState {
         private AggregatorNode aggregatorNode;
         private Aggregator aggregate;
-        private ValueSelectors valueSelectors;
+        private SelectorWrapper selectorWrapper;
 
         private Object aggregateValue;
 
-        private ValueSelectorAggregateState(AggregatorNode aggregatorNode) {
+        private SelectorAggregateState(AggregatorNode aggregatorNode) {
             this.aggregatorNode = aggregatorNode;
             aggregate = aggregatorNode.aggregate();
             aggregateValue = aggregate.zero();
-            final ValueSelectors valueSelectors = ValueSelectors
+            final SelectorWrapper valueSelector = SelectorWrapper
                     .findValueSelectors(aggregatorNode, new ArrayDeque<Expression<?, ?>>());
-            this.valueSelectors = checkNotNull(valueSelectors,
+            selectorWrapper = checkNotNull(valueSelector,
                     "unable to find value selector under aggregator node " + aggregatorNode);
         }
 
         public void frame(Frame frame) {
             final FrameContext frameContext = new FrameContext(frame);
-            if (valueSelectors.valueSelector.selector().acceptsRecursive(frame, frameContext)) {
-                add(frame.contents());
+            DocumentSelector documentSelector = selectorWrapper.selector.getDocumentSelector();
+            if (documentSelector.accepts(frame.document())) {
+                ValueSelectorNode valueSelectorNode = selectorWrapper.selector.getValueSelector().selector();
+                if (valueSelectorNode.acceptsRecursive(frame, frameContext)) {
+                    add(frame.contents());
+                }
             }
         }
 
         private void add(String value) {
             checkNotNull(value);
 
-            Object transformedValue = valueSelectors.applyTransforms(value);
+            Object transformedValue = selectorWrapper.applyTransforms(value);
             Object mappedValue = aggregate.map(transformedValue);
             aggregateValue = aggregate.add(aggregateValue, mappedValue);
         }
@@ -128,49 +134,49 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
         @Override
         public String toString() {
-            return "ValueSelectorAggregateState{" +
+            return "SelectorAggregateState{" +
                     "aggregatorNode=" + aggregatorNode +
                     ", \n\taggregate=" + aggregate +
-                    ", \n\tvalueSelectors=" + valueSelectors +
+                    ", \n\tselectorWrapper=" + selectorWrapper +
                     ", \n\taggregateValue=" + aggregateValue +
                     '}';
         }
     }
 
-    private static class ValueSelectors {
-        private ValueSelector valueSelector;
+    private static class SelectorWrapper {
+        private Selector selector;
         private Deque<Expression<?, ?>> expressions = new ArrayDeque<Expression<?, ?>>();
 
-        public ValueSelectors(ValueSelector valueSelector, ArrayDeque<Expression<?, ?>> expressions) {
-            this.valueSelector = valueSelector;
+        public SelectorWrapper(Selector selector, ArrayDeque<Expression<?, ?>> expressions) {
+            this.selector = selector;
             this.expressions = expressions;
         }
 
         // TODO support more than one value selector
-        private static ValueSelectors findValueSelectors(Expression expression, Deque<Expression<?, ?>> expressionPath) {
+        private static SelectorWrapper findValueSelectors(Expression expression, Deque<Expression<?, ?>> expressionPath) {
             if (expression instanceof Selector) {
                 ArrayDeque<Expression<?, ?>> expressions1 = new ArrayDeque<Expression<?, ?>>(expressionPath);
                 expressions1.removeFirst();
-                return new ValueSelectors(((Selector)expression).getValueSelector(), expressions1);
+                return new SelectorWrapper((Selector)expression, expressions1);
             }
 
-            ValueSelectors valueSelectors = null;
+            SelectorWrapper selectorWrapper = null;
 
             for (Object child : expression.children()) {
                 expressionPath.addFirst((Expression)child);
-                ValueSelectors childSelectors = findValueSelectors((Expression) child, expressionPath);
+                SelectorWrapper childSelectorWrapper = findValueSelectors((Expression)child, expressionPath);
                 expressionPath.removeFirst();
 
-                if (childSelectors != null) {
-                    if (valueSelectors != null) {
+                if (childSelectorWrapper != null) {
+                    if (selectorWrapper != null) {
                         throw new UnsupportedOperationException("TODO");
                     }
 
-                    valueSelectors = childSelectors;
+                    selectorWrapper = childSelectorWrapper;
                 }
             }
 
-            return valueSelectors;
+            return selectorWrapper;
         }
 
         private Object applyTransforms(Object value) {

@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class StaticExpressionTest extends ExpressionTestBase {
     @Test
-    public void numericInequalityTest() throws IOException, InvalidExpressionException {
+    public void numericInequalityTest() throws IOException, StreamPathException {
         assertEquals(false, eval("1 > 2"));
         assertEquals(false, eval("1 >= 2"));
         assertEquals(true, eval("1 < 2"));
@@ -30,13 +30,13 @@ public class StaticExpressionTest extends ExpressionTestBase {
     }
 
     @Test
-    public void stringEqualityTest() throws IOException, InvalidExpressionException {
+    public void stringEqualityTest() throws IOException, StreamPathException {
         assertEquals(true, eval("\"a\" != \"b\""));
         assertEquals(false, eval("\"a\" != \"a\""));
     }
 
     @Test
-    public void binaryBooleanLogicTest() throws IOException, InvalidExpressionException {
+    public void binaryBooleanLogicTest() throws IOException, StreamPathException {
         assertEquals(true, eval("true and true"));
         assertEquals(false, eval("true and false"));
         assertEquals(false, eval("false and true"));
@@ -52,7 +52,7 @@ public class StaticExpressionTest extends ExpressionTestBase {
     }
 
     @Test
-    public void arithmeticTest() throws IOException, InvalidExpressionException {
+    public void arithmeticTest() throws IOException, StreamPathException {
         assertEquals(new BigDecimal(2), eval("1 + 1"));
     }
 }

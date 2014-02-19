@@ -42,7 +42,7 @@ public class Evaluator {
         for (Document document : referencedDocuments()) {
             Iterable<Frame> frames;
             try {
-                frames = new DocumentFrameXMLEventReader().read(document.stream());
+                frames = new DocumentFrameXMLEventReader().read(document.stream(), document);
             } catch (XMLStreamException e) {
                 throw new IOException(e);
             }
@@ -73,8 +73,8 @@ public class Evaluator {
             Object result;
 
             if (node instanceof Selector) {
-                final Aggregator3000.ValueSelectorAggregateState valueSelectorNodeState = aggregator3000
-                        .getValueSelectorNodeState(((Selector) node).getValueSelector());
+                final Aggregator3000.SelectorAggregateState valueSelectorNodeState = aggregator3000
+                        .getValueSelectorNodeState((Selector)node);
 
                 previous = node;
                 while (node != valueSelectorNodeState.aggregatorNode()) {

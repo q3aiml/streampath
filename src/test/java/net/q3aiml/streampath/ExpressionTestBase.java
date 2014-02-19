@@ -1,48 +1,35 @@
 package net.q3aiml.streampath;
 
 import com.google.common.collect.ImmutableSet;
-import net.q3aiml.streampath.ast.Context;
-import net.q3aiml.streampath.ast.Expression;
-import net.q3aiml.streampath.evaluator.EvaluationResult;
-import net.q3aiml.streampath.evaluator.Evaluator;
-import net.q3aiml.streampath.evaluator.Frame;
-import net.q3aiml.streampath.lang.Parser;
-import org.parboiled.Parboiled;
-import org.parboiled.errors.ErrorUtils;
-import org.parboiled.parserunners.ReportingParseRunner;
-import org.parboiled.support.ParseTreeUtils;
-import org.parboiled.support.ParsingResult;
 
 import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * @author q3aiml
  */
 public abstract class ExpressionTestBase {
-    private static Parser parser = Parboiled.createParser(Parser.class);
-
-    public Object eval(String expression) throws IOException, InvalidExpressionException {
-        return eval(expression, new Source[0]);
+    public Object eval(String expression) throws IOException, StreamPathException {
+        return eval(expression, (Source)null);
     }
 
-    public Object eval(String expression, Source... documents) throws IOException, InvalidExpressionException {
-        ParsingResult<Expression<?, ?>> parseResult = new ReportingParseRunner(parser.Expression()).run(expression);
-        String parseTreePrintOut = ParseTreeUtils.printNodeTree(parseResult);
-        if (!parseResult.hasErrors()) {
-            System.out.println(parseTreePrintOut);
+    public Object eval(String expression, Source document) throws IOException, StreamPathException {
+        return eval(expression, DocumentSets.ofSource(document));
+    }
 
-            Expression<?, ?> compiledExpression = parseResult.parseTreeRoot.getValue();
-            Evaluator evaluator = new Evaluator(DocumentSets.ofSources(documents), ImmutableSet.of(compiledExpression));
-            EvaluationResult results = evaluator.evaluate();
-            Object result = results.result(compiledExpression);
-            System.out.println("evaluator value! " + compiledExpression + " -> " + result);
+    public Object eval(String expression, DocumentSet documentSet) throws StreamPathException, IOException {
+        StreamPathResult results = new StreamPath()
+                .evaluate(documentSet, ImmutableSet.of(expression));
+        final Object result = results.result(expression);
+        System.out.println("evaluator value! " + expression + " -> " + result);
+        System.out.println();
 
-            System.out.println();
+        return result;
+    }
 
-            return result;
-        } else {
-            throw new InvalidExpressionException(expression, ErrorUtils.printParseErrors(parseResult.parseErrors));
-        }
+    public static Source doc(String contents) {
+        return new StreamSource(new StringReader(contents));
     }
 }

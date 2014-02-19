@@ -1,9 +1,16 @@
 package net.q3aiml.streampath.evaluator;
 
+import net.q3aiml.streampath.Document;
+
+import javax.annotation.Nullable;
+
 /**
  * @author q3aiml
  */
 public interface Frame {
+    @Nullable
+    public Document document();
+
     /**
      * @see #isRoot()
      */

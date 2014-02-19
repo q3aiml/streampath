@@ -4,9 +4,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
-import java.io.StringReader;
 import java.math.BigDecimal;
 
 import static org.junit.Assert.assertEquals;
@@ -50,12 +48,8 @@ public class DocumentExpressionTest extends ExpressionTestBase {
         );
     }
 
-    private static Source doc(String contents) {
-        return new StreamSource(new StringReader(contents));
-    }
-
     @Test
-    public void aggregateFunctionTest() throws IOException, InvalidExpressionException {
+    public void aggregateFunctionTest() throws IOException, StreamPathException {
         assertEquals(new BigDecimal(26), eval("sum(//value)", doc()));
         assertEquals(new BigDecimal(26), eval("sum(/root/a/item/value)", doc()));
         assertEquals(new BigDecimal(26), eval("sum(/root/a//value)", doc()));
@@ -66,7 +60,7 @@ public class DocumentExpressionTest extends ExpressionTestBase {
     }
 
     @Test
-    public void selectorAttributePredicateTest() throws IOException, InvalidExpressionException {
+    public void selectorAttributePredicateTest() throws IOException, StreamPathException {
         assertEquals(new BigDecimal(2), eval("count(/root/number[@type == \"b\"])", attrDoc()));
         assertEquals(new BigDecimal(1), eval("count(//number[@type == \"a\"])", attrDoc()));
         assertEquals(new BigDecimal(18), eval("sum(//number[@type == \"b\"])", attrDoc()));
