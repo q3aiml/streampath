@@ -18,4 +18,9 @@ public abstract class Literal<T> implements Expression<T, Void> {
     public boolean isConstant() {
         return true;
     }
+
+    /**
+     * The value of this literal as a string without any quoting.
+     */
+    public abstract String asString();
 }

@@ -34,10 +34,8 @@ public class DocumentSelector implements SelectorBase {
 
     private boolean acceptsDocumentIdentifier(String identifier) {
         if ("document".equals(selector) && arguments.size() == 1) {
-            Object literalValue = arguments.get(0).getValue(null);
-            if (literalValue != null) {
-                return equal(literalValue.toString(), identifier);
-            }
+            String literalValue = arguments.get(0).asString();
+            return equal(literalValue, identifier);
         }
         return false;
     }

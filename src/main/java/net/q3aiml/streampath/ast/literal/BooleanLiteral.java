@@ -26,6 +26,11 @@ public class BooleanLiteral extends Literal<Boolean> {
     }
 
     @Override
+    public String asString() {
+        return Boolean.toString(value);
+    }
+
+    @Override
     public String toString() {
         return Boolean.toString(value);
     }

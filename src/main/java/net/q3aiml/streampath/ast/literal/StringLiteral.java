@@ -26,6 +26,11 @@ public class StringLiteral extends Literal<String> {
     }
 
     @Override
+    public String asString() {
+        return value;
+    }
+
+    @Override
     public String toString() {
         return "Literal{" + value + "}";
     }

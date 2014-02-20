@@ -32,6 +32,11 @@ public class SymbolLiteral extends Literal<Symbol> {
     }
 
     @Override
+    public String asString() {
+        return symbol.name();
+    }
+
+    @Override
     public String toString() {
         return symbol.representation();
     }
