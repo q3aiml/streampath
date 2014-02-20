@@ -1,7 +1,6 @@
 package net.q3aiml.streampath.ast.selector;
 
 import com.google.common.collect.ImmutableList;
-import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.Expression;
 
 import java.util.List;
@@ -39,11 +38,6 @@ public class Selector implements Expression<Object, Object>, SelectorBase {
     @Override
     public Object apply(List<Object> arguments) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getValue(Context context) {
-        return valueSelector.selectSingle(context);
     }
 
     @Override

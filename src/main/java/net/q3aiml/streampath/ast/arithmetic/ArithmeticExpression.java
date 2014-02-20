@@ -1,7 +1,6 @@
 package net.q3aiml.streampath.ast.arithmetic;
 
 import com.google.common.collect.ImmutableList;
-import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.Keyword;
 import net.q3aiml.streampath.ast.Keywords;
@@ -39,11 +38,6 @@ public class ArithmeticExpression implements Expression<BigDecimal, BigDecimal> 
     public BigDecimal apply(List<Object> arguments) {
         checkArgument(arguments.size() == 2, "expected two arguments, not %s", arguments.size());
         return operation.apply((BigDecimal)arguments.get(0), (BigDecimal)arguments.get(1));
-    }
-
-    @Override
-    public BigDecimal getValue(Context context) {
-        return operation.apply(left.getValue(context), right.getValue(context));
     }
 
     @Override

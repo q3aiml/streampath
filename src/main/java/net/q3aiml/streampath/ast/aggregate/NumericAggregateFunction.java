@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.Expressions;
 import net.q3aiml.streampath.ast.cast.ImplicitCast;
@@ -60,11 +59,6 @@ import java.util.List;
             value = aggregate.add(value, mappedValue);
         }
         return value;
-    }
-
-    @Override
-    public BigDecimal getValue(Context context) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

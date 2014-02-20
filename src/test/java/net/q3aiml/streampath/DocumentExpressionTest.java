@@ -17,6 +17,7 @@ public class DocumentExpressionTest extends ExpressionTestBase {
         return doc(
               "<root>\n"
             + "    <a>\n"
+            // first some siblings that come before the value we are aggregating
             + "        <item>\n"
             + "            <type>RED</type>\n"
             + "            <value>3</value>\n"
@@ -25,13 +26,15 @@ public class DocumentExpressionTest extends ExpressionTestBase {
             + "            <type>BLACK</type>\n"
             + "            <value>5</value>\n"
             + "        </item>\n"
+            + "     "
+            // and now for some siblings that come after the value we are aggregating
             + "        <item>\n"
-            + "            <type>RED</type>\n"
             + "            <value>7</value>\n"
+            + "            <type>RED</type>\n"
             + "        </item>\n"
             + "        <item>\n"
-            + "            <type>BLACK</type>\n"
             + "            <value>11</value>\n"
+            + "            <type>BLACK</type>\n"
             + "        </item>\n"
             + "    </a>"
             + "</root>"
@@ -64,5 +67,11 @@ public class DocumentExpressionTest extends ExpressionTestBase {
         assertEquals(new BigDecimal(2), eval("count(/root/number[@type == \"b\"])", attrDoc()));
         assertEquals(new BigDecimal(1), eval("count(//number[@type == \"a\"])", attrDoc()));
         assertEquals(new BigDecimal(18), eval("sum(//number[@type == \"b\"])", attrDoc()));
+    }
+
+    @Test
+    public void selectorSiblingPredicateTest() throws IOException, StreamPathException {
+        assertEquals(new BigDecimal(10), eval("sum(/root/a/item/value[../type == \"RED\"])", doc()));
+        assertEquals(new BigDecimal(16), eval("sum(/root/a/item/value[../type == \"BLACK\"])", doc()));
     }
 }

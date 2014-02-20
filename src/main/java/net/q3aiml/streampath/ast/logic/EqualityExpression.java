@@ -1,8 +1,6 @@
 package net.q3aiml.streampath.ast.logic;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.Keyword;
 import net.q3aiml.streampath.ast.Keywords;
@@ -36,11 +34,6 @@ public class EqualityExpression extends BooleanExpression<Comparable> {
     public Boolean apply(List<Object> arguments) {
         checkArgument(arguments.size() == 2, "expected two arguments, not %s", arguments.size());
         return operation.apply((Comparable)arguments.get(0), (Comparable)arguments.get(1));
-    }
-
-    @Override
-    public Boolean getValue(Context context) {
-        return apply(Lists.<Object>newArrayList(left.getValue(context), right.getValue(context)));
     }
 
     @Override

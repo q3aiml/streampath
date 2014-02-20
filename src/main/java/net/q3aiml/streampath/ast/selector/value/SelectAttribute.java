@@ -1,12 +1,11 @@
 package net.q3aiml.streampath.ast.selector.value;
 
-import net.q3aiml.streampath.ast.Context;
+import net.q3aiml.streampath.evaluator.Context;
 import net.q3aiml.streampath.ast.StreamPathNode;
-import net.q3aiml.streampath.ast.literal.Symbol;
+import net.q3aiml.streampath.evaluator.YesNoMaybe;
 import net.q3aiml.streampath.evaluator.Frame;
 
 import javax.xml.namespace.QName;
-import javax.xml.stream.events.Attribute;
 
 /**
  * @author q3aiml
@@ -25,14 +24,13 @@ public class SelectAttribute extends ValueSelectorNode implements StreamPathNode
     }
 
     @Override
-    public boolean accepts(Frame frame, FrameContext frameContext) {
-        return frame.attributes().attribute(name) != null;
+    public YesNoMaybe accepts(Frame frame, Context context) {
+        return YesNoMaybe.of(frame.attributes().attribute(name) != null);
     }
 
     @Override
-    public Object selectSingle(Context context) {
-        final Attribute attribute = ((Frame)parent.selectSingle(context)).attributes().attribute(name);
-        return attribute != null ? attribute.getValue() : Symbol.NULL;
+    public FrameNavigator select(FrameNavigator frame) {
+        return parent.select(frame).attribute(name);
     }
 
     @Override

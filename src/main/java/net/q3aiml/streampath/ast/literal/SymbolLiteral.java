@@ -1,6 +1,5 @@
 package net.q3aiml.streampath.ast.literal;
 
-import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.Keywords;
 
 import java.util.List;
@@ -29,11 +28,6 @@ public class SymbolLiteral extends Literal<Symbol> {
     @Override
     public Symbol apply(List<Object> arguments) {
         checkArgument(arguments.size() == 0, "expected no arguments, not %s", arguments.size());
-        return symbol;
-    }
-
-    @Override
-    public Symbol getValue(Context context) {
         return symbol;
     }
 

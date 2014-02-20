@@ -1,7 +1,6 @@
 package net.q3aiml.streampath.ast.logic;
 
 import com.google.common.collect.ImmutableList;
-import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.Keyword;
 import net.q3aiml.streampath.ast.Keywords;
@@ -35,13 +34,6 @@ public class NumericComparisonExpression extends BooleanExpression<BigDecimal> {
     public Boolean apply(List<Object> arguments) {
         checkArgument(arguments.size() == 2, "expected two arguments, not %s", arguments.size());
         return operation.apply((BigDecimal)arguments.get(0), (BigDecimal)arguments.get(1));
-    }
-
-    @Override
-    public Boolean getValue(Context context) {
-        BigDecimal leftValue = left.getValue(context);
-        BigDecimal rightValue = right.getValue(context);
-        return operation.apply(leftValue, rightValue);
     }
 
     @Override

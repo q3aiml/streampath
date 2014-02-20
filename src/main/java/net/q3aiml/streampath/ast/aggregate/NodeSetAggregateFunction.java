@@ -2,7 +2,6 @@ package net.q3aiml.streampath.ast.aggregate;
 
 import com.google.common.base.Joiner;
 import net.q3aiml.streampath.ast.Expression;
-import net.q3aiml.streampath.ast.Context;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -33,11 +32,6 @@ import java.util.List;
 
     @Override
     public BigDecimal apply(List<Object> arguments) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public BigDecimal getValue(Context context) {
         throw new UnsupportedOperationException();
     }
 

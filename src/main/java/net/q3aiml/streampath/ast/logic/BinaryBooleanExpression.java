@@ -1,7 +1,6 @@
 package net.q3aiml.streampath.ast.logic;
 
 import com.google.common.collect.ImmutableList;
-import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.Keyword;
 import net.q3aiml.streampath.ast.Keywords;
@@ -34,11 +33,6 @@ public class BinaryBooleanExpression extends BooleanExpression<Boolean> {
     public Boolean apply(List<Object> arguments) {
         checkArgument(arguments.size() == 2, "expected two arguments, not %s", arguments.size());
         return operation.apply((Boolean)arguments.get(0), (Boolean)arguments.get(1));
-    }
-
-    @Override
-    public Boolean getValue(Context context) {
-       return operation.apply(left.getValue(context), right.getValue(context));
     }
 
     @Override

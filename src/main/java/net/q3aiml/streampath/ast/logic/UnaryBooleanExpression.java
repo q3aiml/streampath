@@ -1,7 +1,6 @@
 package net.q3aiml.streampath.ast.logic;
 
 import com.google.common.collect.ImmutableList;
-import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.Keyword;
 import net.q3aiml.streampath.ast.Keywords;
@@ -32,11 +31,6 @@ public class UnaryBooleanExpression extends BooleanExpression<Boolean> {
     public Boolean apply(List<Object> arguments) {
         checkArgument(arguments.size() == 1, "expected one argument, not %s", arguments.size());
         return operation.apply((Boolean)arguments.get(0));
-    }
-
-    @Override
-    public Boolean getValue(Context context) {
-        return operation.apply(operand.getValue(context));
     }
 
     @Override

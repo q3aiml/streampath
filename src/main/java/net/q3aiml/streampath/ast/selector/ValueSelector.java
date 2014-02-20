@@ -1,8 +1,6 @@
 package net.q3aiml.streampath.ast.selector;
 
 import net.q3aiml.streampath.ast.selector.value.SelectAttribute;
-import net.q3aiml.streampath.evaluator.Frame;
-import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.selector.value.SelectRelative;
 import net.q3aiml.streampath.ast.selector.value.ValueSelectorNode;
 
@@ -27,11 +25,7 @@ public class ValueSelector implements SelectorBase {
         return selector;
     }
 
-    public Object selectSingle(Context context) {
-        Object o = selector.selectSingle(context);
-        if (o instanceof Frame) {
-            return ((Frame)o).contents();
-        }
-        return o;
+    public boolean isExternal() {
+        return !(selector instanceof SelectAttribute && selector.parent() instanceof SelectRelative);
     }
 }

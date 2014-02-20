@@ -12,7 +12,5 @@ public interface Expression<T, I> extends StreamPathNode {
 
     public T apply(List<Object> arguments);
 
-    public T getValue(Context context);
-
     public boolean isConstant();
 }

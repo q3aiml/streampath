@@ -29,7 +29,7 @@ public class Evaluator {
     public Evaluator(DocumentSet documentSet, Set<? extends Expression<?, ?>> expressions) {
         this.expressions = ImmutableSet.copyOf(expressions);
         this.documentSet = documentSet;
-        aggregator3000 = new Aggregator3000(expressions);
+        aggregator3000 = new Aggregator3000(expressions, this);
     }
 
     public EvaluationResult evaluate() throws IOException {
@@ -53,14 +53,14 @@ public class Evaluator {
         }
 
         for (Expression<?, ?> expression : expressions) {
-            Object value = evaluate(expression, verbose ? expressionValues : null);
+            Object value = evaluate(null, expression, verbose ? expressionValues : null);
             expressionValues.put(expression, value);
         }
 
         return new EvaluationResult(expressionValues);
     }
 
-    private Object evaluate(Expression<?, ?> expression, Map<Expression<?, ?>, Object> verboseResults) {
+    /*protected*/ Object evaluate(Frame relativeFrame, Expression<?, ?> expression, Map<Expression<?, ?>, Object> verboseResults) {
         Deque<Object> argStack = new LinkedList<Object>();
         Expression<?, ?> previous;
 
@@ -73,17 +73,29 @@ public class Evaluator {
             Object result;
 
             if (node instanceof Selector) {
-                final Aggregator3000.SelectorAggregateState valueSelectorNodeState = aggregator3000
-                        .getValueSelectorNodeState((Selector)node);
 
-                previous = node;
-                while (node != valueSelectorNodeState.aggregatorNode()) {
-                    node = depthFirstUnresolvedRulesIterator.next();
-                }
-                result = valueSelectorNodeState.get();
+                // this is a bit hacky, and there's voodoo about what happens if you call with relativeFrame or not, but should work for now
+                if (relativeFrame == null) {
+                    final Aggregator3000.SelectorAggregateState valueSelectorNodeState = aggregator3000
+                            .getSelectorAggregateState((Selector)node);
 
-                if (log.isTraceEnabled()) {
-                    log.trace("aggregator... skipping from {} to {} -> " + result, previous, node);
+                    previous = node;
+                    while (node != valueSelectorNodeState.aggregatorNode()) {
+                        node = depthFirstUnresolvedRulesIterator.next();
+                    }
+                    result = valueSelectorNodeState.get();
+
+                    if (log.isTraceEnabled()) {
+                        log.trace("aggregator... skipping from {} to {} -> " + result, previous, node);
+                    }
+                } else {
+                    ContextValue<Object> frameState = aggregator3000.getFrameState((Selector)node, relativeFrame);
+                    if (frameState.isAvailable()) {
+                        result = frameState.get();
+                    } else {
+                        return frameState;
+                    }
+
                 }
             } else {
                 ImmutableList.Builder<Object> argsBuilder = ImmutableList.builder();
@@ -93,7 +105,6 @@ public class Evaluator {
                 final ImmutableList<Object> args = argsBuilder.build().reverse();
 
                 try {
-
                     result = node.apply(args);
                     if (log.isTraceEnabled()) {
                         log.trace("evaluating... {} --[ {} ]>> " + result, args, node);

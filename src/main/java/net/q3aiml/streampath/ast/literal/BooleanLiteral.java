@@ -1,7 +1,5 @@
 package net.q3aiml.streampath.ast.literal;
 
-import net.q3aiml.streampath.ast.Context;
-
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -24,11 +22,6 @@ public class BooleanLiteral extends Literal<Boolean> {
     @Override
     public Boolean apply(List<Object> arguments) {
         checkArgument(arguments.size() == 0, "expected no arguments, not %s", arguments.size());
-        return value;
-    }
-
-    @Override
-    public Boolean getValue(Context context) {
         return value;
     }
 

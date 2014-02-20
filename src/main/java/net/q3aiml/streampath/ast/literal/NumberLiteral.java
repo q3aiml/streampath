@@ -1,7 +1,5 @@
 package net.q3aiml.streampath.ast.literal;
 
-import net.q3aiml.streampath.ast.Context;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -29,11 +27,6 @@ public class NumberLiteral extends Literal<BigDecimal> {
     @Override
     public BigDecimal apply(List<Object> arguments) {
         checkArgument(arguments.size() == 0, "expected no arguments, not %s", arguments.size());
-        return value;
-    }
-
-    @Override
-    public BigDecimal getValue(Context context) {
         return value;
     }
 

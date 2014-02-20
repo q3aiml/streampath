@@ -1,7 +1,8 @@
 package net.q3aiml.streampath.ast.selector.value;
 
-import net.q3aiml.streampath.ast.Context;
+import net.q3aiml.streampath.evaluator.Context;
 import net.q3aiml.streampath.ast.StreamPathNode;
+import net.q3aiml.streampath.evaluator.YesNoMaybe;
 import net.q3aiml.streampath.evaluator.Frame;
 
 /**
@@ -19,12 +20,12 @@ public class SelectRoot extends ValueSelectorNode implements StreamPathNode {
     }
 
     @Override
-    public boolean accepts(Frame frame, FrameContext frameContext) {
-        return frame.parent() == null;
+    public YesNoMaybe accepts(Frame frame, Context context) {
+        return YesNoMaybe.of(frame.parent() == null);
     }
 
     @Override
-    public Object selectSingle(Context context) {
+    public FrameNavigator select(FrameNavigator frame) {
         throw new UnsupportedOperationException();
     }
 

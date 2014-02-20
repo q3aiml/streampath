@@ -1,8 +1,9 @@
 package net.q3aiml.streampath.ast.selector.value;
 
 import net.q3aiml.streampath.ast.StreamPathNode;
+import net.q3aiml.streampath.evaluator.YesNoMaybe;
 import net.q3aiml.streampath.evaluator.Frame;
-import net.q3aiml.streampath.ast.Context;
+import net.q3aiml.streampath.evaluator.Context;
 
 /**
  * descendant-or-self aka //
@@ -19,22 +20,22 @@ public class DescendantOrSelf extends ValueSelectorNode implements StreamPathNod
     }
 
     @Override
-    public boolean accepts(Frame frame, FrameContext frameContext) {
+    public YesNoMaybe accepts(Frame frame, Context context) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean acceptsRecursive(Frame frame, FrameContext frameContext) {
-        boolean acceptsRecursive = false;
+    public YesNoMaybe acceptsRecursive(Frame frame, Context context) {
+        YesNoMaybe acceptsRecursive = YesNoMaybe.NO;
         while (frame != null) {
-            acceptsRecursive |= parent.acceptsRecursive(frame, frameContext);
+            acceptsRecursive = acceptsRecursive.or(parent.acceptsRecursive(frame, context));
             frame = frame.parent();
         }
         return acceptsRecursive;
     }
 
     @Override
-    public Object selectSingle(Context context) {
+    public FrameNavigator select(FrameNavigator frame) {
         throw new UnsupportedOperationException();
     }
 

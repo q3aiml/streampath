@@ -1,7 +1,6 @@
 package net.q3aiml.streampath.ast.cast;
 
 import com.google.common.collect.ImmutableList;
-import net.q3aiml.streampath.ast.Context;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.Type;
 import net.q3aiml.streampath.ast.literal.Symbol;
@@ -135,10 +134,6 @@ public abstract class ImplicitCast<T> implements Expression<T, Object> {
             }
         }
 
-        @Override
-        public BigDecimal getValue(Context context) {
-            return apply(ImmutableList.of(operand.getValue(context)));
-        }
     }
 
     public static class ImplicitStringCast extends ImplicitCast<String> {
@@ -164,10 +159,6 @@ public abstract class ImplicitCast<T> implements Expression<T, Object> {
             }
         }
 
-        @Override
-        public String getValue(Context context) {
-            return apply(ImmutableList.of(operand.getValue(context)));
-        }
     }
 
     public static class ImplicitBooleanCast extends ImplicitCast<Boolean> {
@@ -191,9 +182,5 @@ public abstract class ImplicitCast<T> implements Expression<T, Object> {
             }
         }
 
-        @Override
-        public Boolean getValue(Context context) {
-            return apply(ImmutableList.of(operand.getValue(context)));
-        }
     }
 }
