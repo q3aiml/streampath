@@ -16,7 +16,7 @@ public abstract class ExpressionTestBase {
     }
 
     public Object eval(String expression, Source document) throws IOException, StreamPathException {
-        return eval(expression, DocumentSets.ofSource(document));
+        return eval(expression, document != null ? DocumentSets.ofSource(document) : DocumentSets.empty());
     }
 
     public Object eval(String expression, DocumentSet documentSet) throws StreamPathException, IOException {
