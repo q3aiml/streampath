@@ -11,25 +11,25 @@ public class AggregateModule {
     private static final ImmutableMap<String, FunctionFactory> FUNCTION_FACTORIES = ImmutableMap.of(
             "count", new FunctionFactory() {
                 @Override
-                public Expression<?, ?> create(List<Expression<?, ?>> arguments) {
+                public Expression<?> create(List<Expression<?>> arguments) {
                     return NodeSetAggregateFunction.count(arguments);
                 }
             },
             "min", new FunctionFactory() {
                 @Override
-                public Expression<?, ?> create(List<Expression<?, ?>> arguments) {
+                public Expression<?> create(List<Expression<?>> arguments) {
                     return NumericAggregateFunction.min(arguments);
                 }
             },
             "max", new FunctionFactory() {
                 @Override
-                public Expression<?, ?> create(List<Expression<?, ?>> arguments) {
+                public Expression<?> create(List<Expression<?>> arguments) {
                     return NumericAggregateFunction.max(arguments);
                 }
             },
             "sum", new FunctionFactory() {
                 @Override
-                public Expression<?, ?> create(List<Expression<?, ?>> arguments) {
+                public Expression<?> create(List<Expression<?>> arguments) {
                     return NumericAggregateFunction.sum(arguments);
                 }
             }

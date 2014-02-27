@@ -36,7 +36,7 @@ public class ParserCliTester {
     }
 
     public void parseAndPrint(String input) throws IOException {
-        ParsingResult<Expression<?, ?>> result = new ReportingParseRunner(parser.Expression()).run(input);
+        ParsingResult<Expression<?>> result = new ReportingParseRunner(parser.Expression()).run(input);
         String parseTreePrintOut = ParseTreeUtils.printNodeTree(result);
         if (!result.hasErrors()) {
             System.out.println(parseTreePrintOut);

@@ -13,7 +13,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * @author q3aiml
  */
-public abstract class ImplicitCast<T> implements Expression<T, Object> {
+public abstract class ImplicitCast<T> implements Expression<T> {
     protected final Type type;
     protected final Expression operand;
 
@@ -37,7 +37,7 @@ public abstract class ImplicitCast<T> implements Expression<T, Object> {
         return operand.isConstant();
     }
 
-    public static Expression<BigDecimal, ?> numeric(Expression operand) {
+    public static Expression<BigDecimal> numeric(Expression operand) {
         if (operand.getValueType() == BigDecimal.class) {
             //noinspection unchecked
             return operand;
@@ -46,7 +46,7 @@ public abstract class ImplicitCast<T> implements Expression<T, Object> {
         }
     }
 
-    public static Expression<String, ?> string(Expression operand) {
+    public static Expression<String> string(Expression operand) {
         if (operand.getValueType() == String.class) {
             //noinspection unchecked
             return operand;
@@ -55,7 +55,7 @@ public abstract class ImplicitCast<T> implements Expression<T, Object> {
         }
     }
 
-    public static Expression<Boolean, ?> bool(Expression operand) {
+    public static Expression<Boolean> bool(Expression operand) {
         if (operand.getValueType() == Boolean.class) {
             //noinspection unchecked
             return operand;
@@ -64,7 +64,7 @@ public abstract class ImplicitCast<T> implements Expression<T, Object> {
         }
     }
 
-    public static Expression<? extends Comparable, ?>[] comparable(Expression... operands) {
+    public static Expression<? extends Comparable>[] comparable(Expression... operands) {
         boolean compatibleTypes = true;
         Class type = null;
 
@@ -93,11 +93,11 @@ public abstract class ImplicitCast<T> implements Expression<T, Object> {
 
         if (compatibleTypes) {
             //noinspection unchecked
-            return (Expression<Comparable, ?>[])operands;
+            return (Expression<Comparable>[])operands;
         }
 
 
-        Expression<? extends Comparable, ?>[] comparables = (Expression<? extends Comparable, ?>[])new Expression[operands.length];
+        Expression<? extends Comparable>[] comparables = (Expression<? extends Comparable>[])new Expression[operands.length];
         for (int i = 0; i < operands.length; i++) {
             if (type == BigDecimal.class) {
                 comparables[i] = numeric(operands[i]);

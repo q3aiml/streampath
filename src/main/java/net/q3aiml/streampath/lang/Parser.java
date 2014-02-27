@@ -29,7 +29,7 @@ import java.util.Map;
  */
 @BuildParseTree
 @SuppressWarnings("InfiniteRecursion")
-public class Parser extends ParserBase<Expression<?, ?>> {
+public class Parser extends ParserBase<Expression<?>> {
     private final Map<String, FunctionFactory> functions;
 
     public Parser() {
@@ -132,10 +132,10 @@ public class Parser extends ParserBase<Expression<?, ?>> {
 
     Rule Function() {
         Var<String> op = new Var<String>();
-        Var<List<Expression<?, ?>>> args = new Var<List<Expression<?, ?>>>(new Factory<List<Expression<?, ?>>>() {
+        Var<List<Expression<?>>> args = new Var<List<Expression<?>>>(new Factory<List<Expression<?>>>() {
             @Override
-            public List<Expression<?, ?>> create() {
-                return new ArrayList<Expression<?, ?>>();
+            public List<Expression<?>> create() {
+                return new ArrayList<Expression<?>>();
             }
         });
         return Sequence(
@@ -161,7 +161,7 @@ public class Parser extends ParserBase<Expression<?, ?>> {
         );
     }
 
-    protected Expression<?,?> createFunction(String name, List<Expression<?, ?>> arguments) {
+    protected Expression<?> createFunction(String name, List<Expression<?>> arguments) {
         final FunctionFactory functionFactory = functions.get(name);
         if (functionFactory == null) {
             throw new IllegalArgumentException("unknown function '" + name + "'"

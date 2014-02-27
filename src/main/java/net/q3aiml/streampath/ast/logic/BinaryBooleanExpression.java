@@ -15,8 +15,8 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class BinaryBooleanExpression extends BooleanExpression<Boolean> {
     private Operation operation;
-    private Expression<Boolean, ?> left;
-    private Expression<Boolean, ?> right;
+    private Expression<Boolean> left;
+    private Expression<Boolean> right;
 
     public BinaryBooleanExpression(String operation, Expression left, Expression right) {
         this.operation = Keywords.findByRepresentation(operation, Operation.values());

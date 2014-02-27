@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * @author q3aiml
  */
-public interface Expression<T, I> extends StreamPathNode {
+public interface Expression<T> extends StreamPathNode {
     public List<? extends Expression> children();
 
     public Class<T> getValueType();

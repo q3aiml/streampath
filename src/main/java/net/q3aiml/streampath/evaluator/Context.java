@@ -9,5 +9,5 @@ public interface Context {
     /**
      * Returns the value of {@link expression} relative to {@param relativeFrame} based on the current context.
      */
-    public <T> ContextValue<T> getValue(Frame relativeFrame, Expression<T, ?> expression);
+    public <T> ContextValue<T> getValue(Frame relativeFrame, Expression<T> expression);
 }

@@ -14,12 +14,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * @author q3aiml
  */
-public class ArithmeticExpression implements Expression<BigDecimal, BigDecimal> {
+public class ArithmeticExpression implements Expression<BigDecimal> {
     private Operation operation;
-    private Expression<BigDecimal, ?> left;
-    private Expression<BigDecimal, ?> right;
+    private Expression<BigDecimal> left;
+    private Expression<BigDecimal> right;
 
-    public ArithmeticExpression(String operation, Expression<?, ?> left, Expression<?, ?> right) {
+    public ArithmeticExpression(String operation, Expression<?> left, Expression<?> right) {
         this.operation = Keywords.findByRepresentation(operation, Operation.values());
         this.left = ImplicitCast.numeric(left);
         this.right = ImplicitCast.numeric(right);

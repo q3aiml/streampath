@@ -58,7 +58,7 @@ public class StreamPath {
     public StreamPathResult evaluate(DocumentSet documentSet, Set<String> expressions, boolean verbose)
             throws IOException, InvalidExpressionException, InvalidDocumentException, StreamPathException
     {
-        BiMap<String, Expression<?, ?>> compiledExpressions = compile(expressions);
+        BiMap<String, Expression<?>> compiledExpressions = compile(expressions);
         Evaluator evaluator = new Evaluator(documentSet, compiledExpressions.values());
         final EvaluationResult result;
         try {
@@ -74,7 +74,7 @@ public class StreamPath {
         if (verbose) {
             expressions = new HashSet<String>(expressions);
             compiledExpressions = HashBiMap.create(compiledExpressions);
-            for (Expression<?, ?> expression : result.results().keySet()) {
+            for (Expression<?> expression : result.results().keySet()) {
                 if (!compiledExpressions.containsValue(expression)) {
                     expressions.add(expression.toString());
                     compiledExpressions.put(expression.toString(), expression);
@@ -84,10 +84,10 @@ public class StreamPath {
         }
 
         final Set<String> finalExpressions = expressions;
-        final BiMap<String, Expression<?, ?>> finalCompiledExpressions = compiledExpressions;
+        final BiMap<String, Expression<?>> finalCompiledExpressions = compiledExpressions;
         return new StreamPathResult() {
             public Object result(String expression) {
-                Expression<?, ?> compiledExpression = finalCompiledExpressions.get(expression);
+                Expression<?> compiledExpression = finalCompiledExpressions.get(expression);
                 checkArgument(compiledExpression != null, "expression is not in results: " + expression);
                 return result.result(compiledExpression);
             }
@@ -98,19 +98,19 @@ public class StreamPath {
         };
     }
 
-    public ImmutableBiMap<String, Expression<?, ?>> compile(Set<String> expressions)
+    public ImmutableBiMap<String, Expression<?>> compile(Set<String> expressions)
             throws InvalidExpressionException
     {
-        ImmutableBiMap.Builder<String, Expression<?, ?>> compiledExpressions = ImmutableBiMap.builder();
+        ImmutableBiMap.Builder<String, Expression<?>> compiledExpressions = ImmutableBiMap.builder();
         for (String expression : expressions) {
             compiledExpressions.put(expression, compile(expression));
         }
         return compiledExpressions.build();
     }
 
-    public Expression<?, ?> compile(String expression) throws InvalidExpressionException {
+    public Expression<?> compile(String expression) throws InvalidExpressionException {
         @SuppressWarnings("unchecked")
-        ParsingResult<Expression<?, ?>> result = new ReportingParseRunner(parser.Expression()).run(expression);
+        ParsingResult<Expression<?>> result = new ReportingParseRunner(parser.Expression()).run(expression);
         String parseTreePrintOut = ParseTreeUtils.printNodeTree(result);
         if (!result.hasErrors()) {
             log.debug("parse tree for " + expression + ":\n" + parseTreePrintOut);

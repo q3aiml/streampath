@@ -15,28 +15,28 @@ import java.util.List;
  * @author q3aiml
  */
 /*package*/ abstract class NumericAggregateFunction implements AggregatorNode<BigDecimal, Object> {
-    protected final List<Expression<BigDecimal, ?>> arguments;
+    protected final List<Expression<BigDecimal>> arguments;
 
-    protected NumericAggregateFunction(List<Expression<?, ?>> arguments) {
+    protected NumericAggregateFunction(List<Expression<?>> arguments) {
         this.arguments = ImmutableList.copyOf(Lists.transform(arguments,
-                new Function<Expression, Expression<BigDecimal, ?>>() {
+                new Function<Expression, Expression<BigDecimal>>() {
                     @Override
-                    public Expression<BigDecimal, ?> apply(Expression input) {
+                    public Expression<BigDecimal> apply(Expression input) {
                         return ImplicitCast.numeric(input);
                     }
                 })
         );
     }
 
-    public static NumericAggregateFunction min(List<Expression<?, ?>> arguments) {
+    public static NumericAggregateFunction min(List<Expression<?>> arguments) {
         return new Min(arguments);
     }
 
-    public static NumericAggregateFunction max(List<Expression<?, ?>> arguments) {
+    public static NumericAggregateFunction max(List<Expression<?>> arguments) {
         return new Max(arguments);
     }
 
-    public static NumericAggregateFunction sum(List<Expression<?, ?>> arguments) {
+    public static NumericAggregateFunction sum(List<Expression<?>> arguments) {
         return new Sum(arguments);
     }
 
@@ -74,7 +74,7 @@ import java.util.List;
     }
 
     /*package*/ static class Min extends NumericAggregateFunction {
-        public Min(List<Expression<?, ?>> operands) {
+        public Min(List<Expression<?>> operands) {
             super(operands);
         }
 
@@ -85,7 +85,7 @@ import java.util.List;
     }
 
     /*package*/ static class Max extends NumericAggregateFunction {
-        public Max(List<Expression<?, ?>> operands) {
+        public Max(List<Expression<?>> operands) {
             super(operands);
         }
 
@@ -96,7 +96,7 @@ import java.util.List;
     }
 
     /*package*/ static class Sum extends NumericAggregateFunction {
-        public Sum(List<Expression<?, ?>> operands) {
+        public Sum(List<Expression<?>> operands) {
             super(operands);
         }
 

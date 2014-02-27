@@ -25,7 +25,7 @@ public abstract class PredicateFilter extends ValueSelectorNode implements Strea
     }
 
     public static StreamPathNode matching(ValueSelectorNode parent, Expression expression) {
-        Expression<Boolean, ?> boolExpression = ImplicitCast.bool(expression);
+        Expression<Boolean> boolExpression = ImplicitCast.bool(expression);
         return new ExpressionPredicateFilter(parent, boolExpression);
     }
 
@@ -40,9 +40,9 @@ public abstract class PredicateFilter extends ValueSelectorNode implements Strea
     }
 
     private static class ExpressionPredicateFilter extends PredicateFilter {
-        private final Expression<Boolean, ?> expression;
+        private final Expression<Boolean> expression;
 
-        public ExpressionPredicateFilter(ValueSelectorNode parent, Expression<Boolean, ?> expression) {
+        public ExpressionPredicateFilter(ValueSelectorNode parent, Expression<Boolean> expression) {
             super(parent);
             this.expression = expression;
         }
@@ -88,7 +88,7 @@ public abstract class PredicateFilter extends ValueSelectorNode implements Strea
 
         private static class FooContext implements Context {
             @Override
-            public <T> ContextValue<T> getValue(Frame relativeFrame, Expression<T, ?> expression) {
+            public <T> ContextValue<T> getValue(Frame relativeFrame, Expression<T> expression) {
                 return ContextValue.willBeAvailable(YesNoMaybe.MAYBE);
             }
         }

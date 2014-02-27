@@ -21,12 +21,12 @@ import java.util.*;
 public class Evaluator {
     private static final Logger log = LoggerFactory.getLogger(Evaluator.class);
 
-    private final Set<Expression<?, ?>> expressions;
+    private final Set<Expression<?>> expressions;
     private final DocumentSet documentSet;
 
     private Aggregator3000 aggregator3000;
 
-    public Evaluator(DocumentSet documentSet, Set<? extends Expression<?, ?>> expressions) {
+    public Evaluator(DocumentSet documentSet, Set<? extends Expression<?>> expressions) {
         this.expressions = ImmutableSet.copyOf(expressions);
         this.documentSet = documentSet;
         aggregator3000 = new Aggregator3000(expressions, this);
@@ -37,7 +37,7 @@ public class Evaluator {
     }
 
     public EvaluationResult evaluate(boolean verbose) throws IOException {
-        Map<Expression<?, ?>, Object> expressionValues = new HashMap<Expression<?, ?>, Object>();
+        Map<Expression<?>, Object> expressionValues = new HashMap<Expression<?>, Object>();
 
         for (Document document : referencedDocuments()) {
             Iterable<Frame> frames;
@@ -52,7 +52,7 @@ public class Evaluator {
             }
         }
 
-        for (Expression<?, ?> expression : expressions) {
+        for (Expression<?> expression : expressions) {
             Object value = evaluate(null, expression, verbose ? expressionValues : null);
             expressionValues.put(expression, value);
         }
@@ -60,15 +60,15 @@ public class Evaluator {
         return new EvaluationResult(expressionValues);
     }
 
-    /*protected*/ Object evaluate(Frame relativeFrame, Expression<?, ?> expression, Map<Expression<?, ?>, Object> verboseResults) {
+    /*protected*/ Object evaluate(Frame relativeFrame, Expression<?> expression, Map<Expression<?>, Object> verboseResults) {
         Deque<Object> argStack = new LinkedList<Object>();
-        Expression<?, ?> previous;
+        Expression<?> previous;
 
         argStack.push(new ArrayList<Object>());
 
-        Iterator<Expression<?, ?>> depthFirstUnresolvedRulesIterator = Expressions.depthFirstIteration(expression).iterator();
+        Iterator<Expression<?>> depthFirstUnresolvedRulesIterator = Expressions.depthFirstIteration(expression).iterator();
         while (depthFirstUnresolvedRulesIterator.hasNext()) {
-            Expression<?, ?> node = depthFirstUnresolvedRulesIterator.next();
+            Expression<?> node = depthFirstUnresolvedRulesIterator.next();
 
             Object result;
 
@@ -99,7 +99,7 @@ public class Evaluator {
                 }
             } else {
                 ImmutableList.Builder<Object> argsBuilder = ImmutableList.builder();
-                for (Expression<?,?> argExpression : node.children()) {
+                for (Expression<?> argExpression : node.children()) {
                     argsBuilder.add(argStack.pop());
                 }
                 final ImmutableList<Object> args = argsBuilder.build().reverse();

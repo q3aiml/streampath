@@ -15,12 +15,12 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class EqualityExpression extends BooleanExpression<Comparable> {
     private Operation operation;
-    private Expression<? extends Comparable, ?> left;
-    private Expression<? extends Comparable, ?> right;
+    private Expression<? extends Comparable> left;
+    private Expression<? extends Comparable> right;
 
     public EqualityExpression(String operation, Expression left, Expression right) {
         this.operation = Keywords.findByRepresentation(operation, Operation.values());
-        Expression<? extends Comparable, ?>[] comparables = ImplicitCast.comparable(left, right);
+        Expression<? extends Comparable>[] comparables = ImplicitCast.comparable(left, right);
         this.left = comparables[0];
         this.right = comparables[1];
     }

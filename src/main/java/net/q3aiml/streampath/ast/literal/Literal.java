@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author q3aiml
  */
-public abstract class Literal<T> implements Expression<T, Void> {
+public abstract class Literal<T> implements Expression<T> {
     @Override
     public List<? extends Expression> children() {
         return ImmutableList.of();

@@ -16,8 +16,8 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class NumericComparisonExpression extends BooleanExpression<BigDecimal> {
     private Operation operation;
-    private Expression<BigDecimal, ?> left;
-    private Expression<BigDecimal, ?> right;
+    private Expression<BigDecimal> left;
+    private Expression<BigDecimal> right;
 
     public NumericComparisonExpression(String operation, Expression left, Expression right) {
         this.operation = Keywords.findByRepresentation(operation, Operation.values());

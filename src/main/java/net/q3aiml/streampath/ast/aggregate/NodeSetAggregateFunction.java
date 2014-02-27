@@ -10,13 +10,13 @@ import java.util.List;
  * @author q3aiml
  */
 /*package*/ abstract class NodeSetAggregateFunction implements AggregatorNode<BigDecimal, Object> {
-    private final List<Expression<?, ?>> arguments;
+    private final List<Expression<?>> arguments;
 
-    protected NodeSetAggregateFunction(List<Expression<?, ?>> arguments) {
+    protected NodeSetAggregateFunction(List<Expression<?>> arguments) {
         this.arguments = arguments;
     }
 
-    public static NodeSetAggregateFunction count(List<Expression<?, ?>> arguments) {
+    public static NodeSetAggregateFunction count(List<Expression<?>> arguments) {
         return new Count(arguments);
     }
 
@@ -48,7 +48,7 @@ import java.util.List;
     }
 
     /*package*/ static class Count extends NodeSetAggregateFunction {
-        public Count(List<Expression<?, ?>> operands) {
+        public Count(List<Expression<?>> operands) {
             super(operands);
         }
 

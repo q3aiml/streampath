@@ -41,7 +41,7 @@ import static com.google.common.base.Preconditions.checkState;
     private final ImmutableSet<SelectorAggregateState> aggregators;
     private final Evaluator evaluator;
 
-    public Aggregator3000(Iterable<? extends Expression<?, ?>> expressions, Evaluator evaluator) {
+    public Aggregator3000(Iterable<? extends Expression<?>> expressions, Evaluator evaluator) {
         this(findNonConstantAggregatorNodes(expressions, new HashSet<AggregatorNode>()), evaluator);
     }
 
@@ -67,7 +67,7 @@ import static com.google.common.base.Preconditions.checkState;
         }
 
         if (node instanceof Expression) {
-            for (StreamPathNode childExpression : ((Expression<?, ?>)node).children()) {
+            for (StreamPathNode childExpression : ((Expression<?>)node).children()) {
                 findNonConstantAggregatorNodes(childExpression, aggregatorNodes);
             }
         }
@@ -185,7 +185,7 @@ import static com.google.common.base.Preconditions.checkState;
             aggregate = aggregatorNode.aggregate();
             aggregateValue = aggregate.zero();
             final SelectorWrapper valueSelector = SelectorWrapper
-                    .findValueSelectors(aggregatorNode, new ArrayDeque<Expression<?, ?>>());
+                    .findValueSelectors(aggregatorNode, new ArrayDeque<Expression<?>>());
             selectorWrapper = checkNotNull(valueSelector,
                     "unable to find value selector under aggregator node " + aggregatorNode);
 
@@ -279,17 +279,17 @@ import static com.google.common.base.Preconditions.checkState;
 
     private static class SelectorWrapper {
         private Selector selector;
-        private Deque<Expression<?, ?>> expressions = new ArrayDeque<Expression<?, ?>>();
+        private Deque<Expression<?>> expressions = new ArrayDeque<Expression<?>>();
 
-        public SelectorWrapper(Selector selector, ArrayDeque<Expression<?, ?>> expressions) {
+        public SelectorWrapper(Selector selector, ArrayDeque<Expression<?>> expressions) {
             this.selector = selector;
             this.expressions = expressions;
         }
 
         // TODO support more than one value selector
-        private static SelectorWrapper findValueSelectors(Expression expression, Deque<Expression<?, ?>> expressionPath) {
+        private static SelectorWrapper findValueSelectors(Expression expression, Deque<Expression<?>> expressionPath) {
             if (expression instanceof Selector) {
-                ArrayDeque<Expression<?, ?>> expressions1 = new ArrayDeque<Expression<?, ?>>(expressionPath);
+                ArrayDeque<Expression<?>> expressions1 = new ArrayDeque<Expression<?>>(expressionPath);
                 expressions1.removeFirst();
                 return new SelectorWrapper((Selector)expression, expressions1);
             }

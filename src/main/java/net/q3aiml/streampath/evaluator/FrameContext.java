@@ -13,7 +13,7 @@ import net.q3aiml.streampath.ast.Expression;
     }
 
     @Override
-    public <T> ContextValue<T> getValue(Frame relativeFrame, Expression<T, ?> expression) {
+    public <T> ContextValue<T> getValue(Frame relativeFrame, Expression<T> expression) {
         Object value = evaluator.evaluate(relativeFrame, expression, null);
         if (value instanceof ContextValue) {
             return (ContextValue<T>)value;

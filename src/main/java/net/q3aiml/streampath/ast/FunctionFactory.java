@@ -6,5 +6,5 @@ import java.util.List;
  * @author q3aiml
  */
 public interface FunctionFactory {
-    public Expression<?, ?> create(List<Expression<?, ?>> arguments);
+    public Expression<?> create(List<Expression<?>> arguments);
 }

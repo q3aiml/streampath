@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @author q3aiml
  */
-public class Selector implements Expression<Object, Object>, SelectorBase {
+public class Selector implements Expression<Object>, SelectorBase {
     private final DocumentSelector documentSelector;
     private final ValueSelector valueSelector;
 

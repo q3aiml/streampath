@@ -5,7 +5,7 @@ import net.q3aiml.streampath.ast.Expression;
 /**
  * @author q3aiml
  */
-/*package*/ abstract class BooleanExpression<I> implements Expression<Boolean, I> {
+/*package*/ abstract class BooleanExpression<I> implements Expression<Boolean> {
     @Override
     public Class<Boolean> getValueType() {
         return Boolean.class;

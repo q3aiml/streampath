@@ -17,23 +17,23 @@ public final class Expressions {
         return ImmutableList.copyOf(Iterables.filter(depthFirstIteration(expression), Selector.class));
     }
 
-    public static Collection<Expression<?, ?>> depthFirstIteration(Expression<?, ?> expression) {
-        ImmutableSet.Builder<Expression<?, ?>> nodes = ImmutableSet.builder();
+    public static Collection<Expression<?>> depthFirstIteration(Expression<?> expression) {
+        ImmutableSet.Builder<Expression<?>> nodes = ImmutableSet.builder();
         depthFirstIteration(expression, nodes);
         return nodes.build();
     }
 
-    private static void depthFirstIteration(Expression<?, ?> expression, ImmutableSet.Builder<Expression<?, ?>> nodes) {
+    private static void depthFirstIteration(Expression<?> expression, ImmutableSet.Builder<Expression<?>> nodes) {
         for (StreamPathNode child : expression.children()) {
             depthFirstIteration((Expression)child, nodes);
         }
         nodes.add(expression);
     }
 
-    public static boolean allConstant(Iterable<? extends Expression<?, ?>> expressions) {
+    public static boolean allConstant(Iterable<? extends Expression<?>> expressions) {
         checkArgument(!Iterables.isEmpty(expressions), "expressions must not be empty");
 
-        for (Expression<?, ?> expression : expressions) {
+        for (Expression<?> expression : expressions) {
             if (!expression.isConstant()) {
                 return false;
             }

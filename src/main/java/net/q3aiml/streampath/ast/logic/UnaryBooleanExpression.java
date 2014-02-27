@@ -15,7 +15,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class UnaryBooleanExpression extends BooleanExpression<Boolean> {
     private Operation operation;
-    private Expression<Boolean, ?> operand;
+    private Expression<Boolean> operand;
 
     public UnaryBooleanExpression(String operation, Expression operand) {
         this.operation = Keywords.findByRepresentation(operation, Operation.values());
