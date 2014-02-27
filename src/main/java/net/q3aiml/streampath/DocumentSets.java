@@ -50,6 +50,9 @@ public class DocumentSets {
         public Set<Document> documents() {
             return allDocuments;
         }
+
+        @Override
+        public void close() throws IOException { }
     }
 
     private static class StreamDocument implements Document {
