@@ -10,6 +10,8 @@ import javax.xml.transform.Source;
 import java.io.IOException;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * @author q3aiml
  */
@@ -61,7 +63,7 @@ public class DocumentSets {
 
         public StreamDocument(String identifier, Source input) {
             this.identifier = identifier;
-            this.input = input;
+            this.input = checkNotNull(input, "input Source must not be null");
         }
 
         @Nullable
