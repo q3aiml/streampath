@@ -67,7 +67,7 @@ public class DocumentFrameXMLEventReader {
                 try {
                     event = reader.nextEvent();
                 } catch (XMLStreamException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(new InvalidDocumentException(document, e));
                 }
 
                 if (event.isStartElement()) {

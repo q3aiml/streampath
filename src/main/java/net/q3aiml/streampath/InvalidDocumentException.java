@@ -5,15 +5,14 @@ package net.q3aiml.streampath;
  * @author ajclayton
  */
 public class InvalidDocumentException extends StreamPathException {
-    public InvalidDocumentException(String message) {
-        super(message);
-    }
+    private final Document document;
 
-    public InvalidDocumentException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public InvalidDocumentException(Throwable cause) {
+    public InvalidDocumentException(Document document, Throwable cause) {
         super(cause);
+        this.document = document;
+    }
+
+    public Document document() {
+        return document;
     }
 }
