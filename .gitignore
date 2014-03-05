@@ -1,3 +1,5 @@
 *.iml
+/parboiled-java/dependency-reduced-pom.xml
+/parboiled-java/target/
 /.idea/
 /target/
