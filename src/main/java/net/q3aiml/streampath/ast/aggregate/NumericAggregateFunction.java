@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * @author q3aiml
  */
-/*package*/ abstract class NumericAggregateFunction implements AggregatorNode<BigDecimal, Object> {
+/*package*/ abstract class NumericAggregateFunction extends AggregatorNode<BigDecimal> {
     protected final List<Expression<BigDecimal>> arguments;
 
     protected NumericAggregateFunction(List<Expression<?>> arguments) {

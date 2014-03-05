@@ -1,10 +1,7 @@
 package net.q3aiml.streampath.evaluator;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.StreamPathNode;
 import net.q3aiml.streampath.ast.aggregate.Aggregator;
@@ -54,21 +51,39 @@ import static com.google.common.base.Preconditions.checkState;
         this.evaluator = evaluator;
     }
 
-    private static Set<AggregatorNode> findNonConstantAggregatorNodes(Iterable<? extends StreamPathNode> nodes, Set<AggregatorNode> aggregatorNodes) {
+    private static Set<AggregatorNode> findNonConstantAggregatorNodes(Iterable<? extends StreamPathNode> nodes,
+                                                                      Set<AggregatorNode> aggregatorNodes)
+    {
         for (StreamPathNode node : nodes) {
-            findNonConstantAggregatorNodes(node, aggregatorNodes);
+            findNonConstantAggregatorNodes(node, aggregatorNodes, false);
         }
         return aggregatorNodes;
     }
 
-    private static Set<AggregatorNode> findNonConstantAggregatorNodes(StreamPathNode node, Set<AggregatorNode> aggregatorNodes) {
+    /**
+     * Finds all {@link net.q3aiml.streampath.ast.aggregate.AggregatorNode}s that are not
+     * {@link net.q3aiml.streampath.ast.Expression#isConstant()}, creating
+     * {@link net.q3aiml.streampath.evaluator.SingleValueConstantAggregatorNode}s for
+     * {@link net.q3aiml.streampath.ast.selector.Selector}s that are not aggregated.
+     */
+    private static Set<AggregatorNode> findNonConstantAggregatorNodes(StreamPathNode node,
+                                                                      Set<AggregatorNode> aggregatorNodes,
+                                                                      boolean hasAggregateAncestor)
+    {
         if (node instanceof AggregatorNode && !((Expression)node).isConstant()) {
             aggregatorNodes.add((AggregatorNode)node);
+            hasAggregateAncestor = true;
+        }
+
+        if (node instanceof Selector && !hasAggregateAncestor) {
+            // if we didn't find any aggregators in our ancestors then we'll assume we are
+            // selecting a single value and wrap it in our little dummy single value aggregator
+            aggregatorNodes.add(new SingleValueConstantAggregatorNode(ImmutableList.of((Expression)node)));
         }
 
         if (node instanceof Expression) {
             for (StreamPathNode childExpression : ((Expression<?>)node).children()) {
-                findNonConstantAggregatorNodes(childExpression, aggregatorNodes);
+                findNonConstantAggregatorNodes(childExpression, aggregatorNodes, hasAggregateAncestor);
             }
         }
         return aggregatorNodes;
@@ -167,7 +182,7 @@ import static com.google.common.base.Preconditions.checkState;
     }
 
     /*protected*/ class SelectorAggregateState {
-        private AggregatorNode aggregatorNode;
+        private AggregatorNode<?> aggregatorNode;
         private Aggregator aggregate;
         private SelectorWrapper selectorWrapper;
         private final Set<ExternalReference> references;
@@ -262,7 +277,10 @@ import static com.google.common.base.Preconditions.checkState;
             return aggregateValue;
         }
 
-        public AggregatorNode aggregatorNode() {
+        public Expression aggregatorNode() {
+            if (aggregatorNode instanceof SingleValueConstantAggregatorNode) {
+                return Iterables.getOnlyElement(aggregatorNode.children());
+            }
             return aggregatorNode;
         }
 

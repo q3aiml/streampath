@@ -3,13 +3,13 @@ package net.q3aiml.streampath.evaluator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.q3aiml.streampath.Document;
+import net.q3aiml.streampath.DocumentSet;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.Expressions;
 import net.q3aiml.streampath.ast.literal.Literal;
 import net.q3aiml.streampath.ast.selector.Selector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.q3aiml.streampath.DocumentSet;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.IOException;

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * @author q3aiml
  */
-/*package*/ abstract class NodeSetAggregateFunction implements AggregatorNode<BigDecimal, Object> {
+/*package*/ abstract class NodeSetAggregateFunction extends AggregatorNode<BigDecimal> {
     private final List<Expression<?>> arguments;
 
     protected NodeSetAggregateFunction(List<Expression<?>> arguments) {

@@ -13,32 +13,8 @@ import static org.junit.Assert.assertEquals;
  * @author q3aiml
  */
 public class DocumentExpressionTest extends ExpressionTestBase {
-    private static Source doc() {
-        return doc(
-              "<root>\n"
-            + "    <a>\n"
-            // first some siblings that come before the value we are aggregating
-            + "        <item>\n"
-            + "            <type>RED</type>\n"
-            + "            <value>3</value>\n"
-            + "        </item>\n"
-            + "        <item>\n"
-            + "            <type>BLACK</type>\n"
-            + "            <value>5</value>\n"
-            + "        </item>\n"
-            + "     "
-            // and now for some siblings that come after the value we are aggregating
-            + "        <item>\n"
-            + "            <value>7</value>\n"
-            + "            <type>RED</type>\n"
-            + "        </item>\n"
-            + "        <item>\n"
-            + "            <value>11</value>\n"
-            + "            <type>BLACK</type>\n"
-            + "        </item>\n"
-            + "    </a>"
-            + "</root>"
-        );
+    private static Source doc() throws IOException {
+        return doc(TestDocuments.read("doc.xml"));
     }
 
     private static Source attrDoc() {
@@ -53,13 +29,13 @@ public class DocumentExpressionTest extends ExpressionTestBase {
 
     @Test
     public void aggregateFunctionTest() throws IOException, StreamPathException {
-        assertEquals(new BigDecimal(26), eval("sum(//value)", doc()));
-        assertEquals(new BigDecimal(26), eval("sum(/root/a/item/value)", doc()));
-        assertEquals(new BigDecimal(26), eval("sum(/root/a//value)", doc()));
-        assertEquals(new BigDecimal(26), eval("sum(/root//item/value)", doc()));
+        assertEquals(new BigDecimal(48), eval("sum(//value)", doc()));
+        assertEquals(new BigDecimal(48), eval("sum(/root/a/item/value)", doc()));
+        assertEquals(new BigDecimal(48), eval("sum(/root/a//value)", doc()));
+        assertEquals(new BigDecimal(48), eval("sum(/root//item/value)", doc()));
 
         assertEquals(new BigDecimal(3), eval("min(/root/a/item/value)", doc()));
-        assertEquals(new BigDecimal(11), eval("max(/root/a/item/value)", doc()));
+        assertEquals(new BigDecimal(22), eval("max(/root/a/item/value)", doc()));
     }
 
     @Test
@@ -73,5 +49,15 @@ public class DocumentExpressionTest extends ExpressionTestBase {
     public void selectorSiblingPredicateTest() throws IOException, StreamPathException {
         assertEquals(new BigDecimal(10), eval("sum(/root/a/item/value[../type == \"RED\"])", doc()));
         assertEquals(new BigDecimal(16), eval("sum(/root/a/item/value[../type == \"BLACK\"])", doc()));
+    }
+
+    @Test
+    public void selectSimpleValueTest() throws IOException, StreamPathException {
+        assertEquals("22", eval("/root/a/item/value[../type == \"SPECIAL\"]", doc()));
+    }
+
+    @Test
+    public void selectSimpleValueAndAggregateTest() throws IOException, StreamPathException {
+        assertEquals(true, eval("/root/a/item/value[../type == \"SPECIAL\"] == sum(/root/a/item/value[../type == \"RED\"]) + 12" , doc()));
     }
 }

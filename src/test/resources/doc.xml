@@ -1,0 +1,26 @@
+<root>
+    <a>
+        <!-- first some siblings that come before the value we are aggregating -->
+        <item>
+            <type>RED</type>
+            <value>3</value>
+        </item>
+        <item>
+            <type>BLACK</type>
+            <value>5</value>
+        </item>
+        <!-- and now for some siblings that come after the value we are aggregating -->
+        <item>
+            <value>7</value>
+            <type>RED</type>
+        </item>
+        <item>
+            <value>11</value>
+            <type>BLACK</type>
+        </item>
+        <item>
+            <value>22</value>
+            <type>SPECIAL</type>
+        </item>
+    </a>
+</root>

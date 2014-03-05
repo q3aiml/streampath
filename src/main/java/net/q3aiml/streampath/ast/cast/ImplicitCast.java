@@ -81,7 +81,7 @@ public abstract class ImplicitCast<T> implements Expression<T> {
             if (type == null) {
                 type = valueType;
             } else if (valueType == BigDecimal.class) {
-                if (type == String.class) {
+                if (type == String.class || type == Object.class) {
                     // try to compare numbers as numbers
                     type = BigDecimal.class;
                 }

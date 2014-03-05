@@ -7,6 +7,6 @@ import java.math.BigDecimal;
 /**
  * @author q3aiml
  */
-public interface AggregatorNode<T, I> extends Expression<T> {
-    public Aggregator<BigDecimal> aggregate();
+public abstract class AggregatorNode<T> implements Expression<T> {
+    public abstract Aggregator<T> aggregate();
 }
