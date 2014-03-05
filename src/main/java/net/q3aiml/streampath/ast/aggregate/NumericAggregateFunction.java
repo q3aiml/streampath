@@ -82,6 +82,11 @@ import java.util.List;
         public Aggregator<BigDecimal> aggregate() {
             return ComparableAggregates.MIN;
         }
+
+        @Override
+        public Expression<BigDecimal> copy(List<Expression<?>> children) {
+            return new Min(children);
+        }
     }
 
     /*package*/ static class Max extends NumericAggregateFunction {
@@ -93,6 +98,11 @@ import java.util.List;
         public Aggregator<BigDecimal> aggregate() {
             return ComparableAggregates.MAX;
         }
+
+        @Override
+        public Expression<BigDecimal> copy(List<Expression<?>> children) {
+            return new Max(children);
+        }
     }
 
     /*package*/ static class Sum extends NumericAggregateFunction {
@@ -103,6 +113,11 @@ import java.util.List;
         @Override
         public Aggregator<BigDecimal> aggregate() {
             return BigDecimalAggregates.SUM;
+        }
+
+        @Override
+        public Expression<BigDecimal> copy(List<Expression<?>> children) {
+            return new Sum(children);
         }
     }
 

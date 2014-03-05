@@ -25,6 +25,12 @@ public class BinaryBooleanExpression extends BooleanExpression<Boolean> {
     }
 
     @Override
+    public Expression<Boolean> copy(List<Expression<?>> children) {
+        checkArgument(children.size() == 2, "must provide exactly 2 children");
+        return new BinaryBooleanExpression(operation.representation(), children.get(0), children.get(1));
+    }
+
+    @Override
     public List<? extends Expression> children() {
         return ImmutableList.of(left, right);
     }

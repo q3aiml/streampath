@@ -10,6 +10,11 @@ import java.util.List;
  */
 public abstract class Literal<T> implements Expression<T> {
     @Override
+    public Expression<T> copy(List<Expression<?>> children) {
+        return this;
+    }
+
+    @Override
     public List<? extends Expression> children() {
         return ImmutableList.of();
     }

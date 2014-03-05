@@ -18,6 +18,11 @@ public class Selector implements Expression<Object>, SelectorBase {
     }
 
     @Override
+    public Expression<Object> copy(List<Expression<?>> children) {
+        throw new UnsupportedOperationException("cannot copy a selector");
+    }
+
+    @Override
     public List<? extends Expression> children() {
         return ImmutableList.of();
     }

@@ -26,6 +26,12 @@ public class ArithmeticExpression implements Expression<BigDecimal> {
     }
 
     @Override
+    public Expression<BigDecimal> copy(List<Expression<?>> children) {
+        checkArgument(children.size() == 2, "must provide exactly 2 children");
+        return new ArithmeticExpression(operation.representation(), children.get(0), children.get(1));
+    }
+
+    @Override
     public List<? extends Expression> children() {
         return ImmutableList.of(left, right);
     }

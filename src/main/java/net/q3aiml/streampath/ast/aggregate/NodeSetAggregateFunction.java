@@ -58,6 +58,11 @@ import java.util.List;
         }
 
         @Override
+        public Expression<BigDecimal> copy(List<Expression<?>> children) {
+            return new Count(children);
+        }
+
+        @Override
         public boolean isConstant() {
             return false;
         }

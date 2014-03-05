@@ -121,6 +121,12 @@ public abstract class ImplicitCast<T> implements Expression<T> {
         }
 
         @Override
+        public Expression<BigDecimal> copy(List<Expression<?>> children) {
+            checkArgument(children.size() == 2, "must provide exactly one child");
+            return new ImplicitNumericCast(children.get(0));
+        }
+
+        @Override
         public BigDecimal apply(List<Object> arguments) {
             checkArgument(arguments.size() == 1, "expected one argument, not %s", arguments.size());
             Object value = arguments.get(0);
@@ -139,6 +145,12 @@ public abstract class ImplicitCast<T> implements Expression<T> {
     public static class ImplicitStringCast extends ImplicitCast<String> {
         public ImplicitStringCast(Expression operand) {
             super(Type.STRING, operand);
+        }
+
+        @Override
+        public Expression<String> copy(List<Expression<?>> children) {
+            checkArgument(children.size() == 2, "must provide exactly one child");
+            return new ImplicitStringCast(children.get(0));
         }
 
         @Override
@@ -164,6 +176,12 @@ public abstract class ImplicitCast<T> implements Expression<T> {
     public static class ImplicitBooleanCast extends ImplicitCast<Boolean> {
         public ImplicitBooleanCast(Expression operand) {
             super(Type.BOOLEAN, operand);
+        }
+
+        @Override
+        public Expression<Boolean> copy(List<Expression<?>> children) {
+            checkArgument(children.size() == 1, "must provide exactly one child");
+            return new ImplicitBooleanCast(children.get(0));
         }
 
         @Override

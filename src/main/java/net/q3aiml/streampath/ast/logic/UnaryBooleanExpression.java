@@ -23,6 +23,12 @@ public class UnaryBooleanExpression extends BooleanExpression<Boolean> {
     }
 
     @Override
+    public Expression<Boolean> copy(List<Expression<?>> children) {
+        checkArgument(children.size() == 1, "must provide exactly one child");
+        return new UnaryBooleanExpression(operation.representation(), children.get(0));
+    }
+
+    @Override
     public List<? extends Expression> children() {
         return ImmutableList.of(operand);
     }
