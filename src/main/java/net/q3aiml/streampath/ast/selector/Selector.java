@@ -5,6 +5,8 @@ import net.q3aiml.streampath.ast.Expression;
 
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * @author q3aiml
  */
@@ -13,8 +15,8 @@ public class Selector implements Expression<Object>, SelectorBase {
     private final ValueSelector valueSelector;
 
     public Selector(DocumentSelector documentSelector, ValueSelector valueSelector) {
-        this.documentSelector = documentSelector;
-        this.valueSelector = valueSelector;
+        this.documentSelector = checkNotNull(documentSelector, "documentSelector must not be null");
+        this.valueSelector = checkNotNull(valueSelector, "valueSelector must not be null");
     }
 
     @Override

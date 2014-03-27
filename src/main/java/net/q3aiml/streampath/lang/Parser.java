@@ -1,8 +1,9 @@
 package net.q3aiml.streampath.lang;
 
+import net.q3aiml.streampath.StreamPathConfiguration;
+import net.q3aiml.streampath.ast.DocumentSelectorFactory;
 import net.q3aiml.streampath.ast.Expression;
 import net.q3aiml.streampath.ast.FunctionFactory;
-import net.q3aiml.streampath.ast.aggregate.AggregateModule;
 import net.q3aiml.streampath.ast.arithmetic.ArithmeticExpression;
 import net.q3aiml.streampath.ast.literal.Literal;
 import net.q3aiml.streampath.ast.logic.BinaryBooleanExpression;
@@ -10,6 +11,7 @@ import net.q3aiml.streampath.ast.logic.EqualityExpression;
 import net.q3aiml.streampath.ast.logic.NumericComparisonExpression;
 import net.q3aiml.streampath.ast.logic.UnaryBooleanExpression;
 import net.q3aiml.streampath.ast.selector.DocumentSelector;
+import net.q3aiml.streampath.ast.selector.IdentifierDocumentSelector;
 import net.q3aiml.streampath.ast.selector.Selector;
 import net.q3aiml.streampath.ast.selector.ValueSelector;
 import net.q3aiml.streampath.ast.selector.value.*;
@@ -31,13 +33,15 @@ import java.util.Map;
 @SuppressWarnings("InfiniteRecursion")
 public class Parser extends ParserBase<Expression<?>> {
     private final Map<String, FunctionFactory> functions;
+    private final Map<String, DocumentSelectorFactory> dynamicDocumentSelectors;
 
     public Parser() {
-        this(AggregateModule.defaultFunctionFactories());
+        this(StreamPathConfiguration.defaultConfiguration());
     }
 
-    public Parser(Map<String, FunctionFactory> functions) {
-        this.functions = functions;
+    public Parser(StreamPathConfiguration configuration) {
+        functions = configuration.functions();
+        dynamicDocumentSelectors = configuration.dynamicDocumentSelectors();
     }
 
     public Rule Expression() {
@@ -179,7 +183,7 @@ public class Parser extends ParserBase<Expression<?>> {
                         ),
                         Sequence(
                             EMPTY,
-                            push(new DocumentSelector())
+                            push(new IdentifierDocumentSelector())
                         )
                 ),
                 ValueSelector(),
@@ -212,8 +216,17 @@ public class Parser extends ParserBase<Expression<?>> {
                         ),
                         ')'
                 ),
-                push(new DocumentSelector(selector.get(), args.get()))
+                push(createDocumentSelector(selector.get(), args.get()))
         );
+    }
+
+    protected DocumentSelector createDocumentSelector(String name, List<Literal> arguments) {
+        final DocumentSelectorFactory documentSelectorFactory = dynamicDocumentSelectors.get(name);
+        if (documentSelectorFactory == null) {
+            throw new IllegalArgumentException("unknown document selector '" + name + "'"
+                    + ", valid selectors: " + functions.keySet());
+        }
+        return documentSelectorFactory.create(arguments);
     }
 
     Rule ValueSelector() {

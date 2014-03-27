@@ -6,7 +6,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
 import net.q3aiml.streampath.ast.Expression;
-import net.q3aiml.streampath.ast.FunctionFactory;
 import net.q3aiml.streampath.evaluator.EvaluationResult;
 import net.q3aiml.streampath.evaluator.Evaluator;
 import net.q3aiml.streampath.lang.Parser;
@@ -21,7 +20,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -38,8 +36,8 @@ public class StreamPath {
         parser = Parboiled.createParser(Parser.class);
     }
 
-    public StreamPath(Map<String, FunctionFactory> functions) {
-        parser = Parboiled.createParser(Parser.class, functions);
+    public StreamPath(StreamPathConfiguration configuration) {
+        parser = Parboiled.createParser(Parser.class, configuration);
     }
 
     @VisibleForTesting
