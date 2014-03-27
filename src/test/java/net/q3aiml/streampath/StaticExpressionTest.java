@@ -55,4 +55,10 @@ public class StaticExpressionTest extends ExpressionTestBase {
     public void arithmeticTest() throws IOException, StreamPathException {
         assertEquals(new BigDecimal(2), eval("1 + 1"));
     }
+
+    @Test
+    public void aggregateFunctionTest() throws IOException, StreamPathException {
+        assertEquals(new BigDecimal(6), eval("sum(1, 2, 3)"));
+        assertEquals(new BigDecimal(10), eval("sum(1, 2, 3) + 4"));
+    }
 }
