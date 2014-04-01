@@ -12,6 +12,8 @@ import java.util.Map;
  * @author ajclayton
  */
 public class StreamPathConfiguration {
+    private boolean verbose;
+
     private final ImmutableMap.Builder<String, FunctionFactory> functions =
             ImmutableMap.<String, FunctionFactory>builder();
 
@@ -29,6 +31,15 @@ public class StreamPathConfiguration {
 
     public static StreamPathConfiguration emptyConfiguration() {
         return new StreamPathConfiguration();
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public StreamPathConfiguration verbose(boolean verbose) {
+        this.verbose = verbose;
+        return this;
     }
 
     public StreamPathConfiguration addFunction(String name, FunctionFactory factory) {

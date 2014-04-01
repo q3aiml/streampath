@@ -30,13 +30,16 @@ import static com.google.common.base.Preconditions.checkArgument;
 public class StreamPath {
     private static final Logger log = LoggerFactory.getLogger(StreamPath.class);
 
+    private final boolean verbose;
     private final Parser parser;
 
     public StreamPath() {
+        verbose = false;
         parser = Parboiled.createParser(Parser.class);
     }
 
     public StreamPath(StreamPathConfiguration configuration) {
+        this.verbose = configuration.isVerbose();
         parser = Parboiled.createParser(Parser.class, configuration);
     }
 
@@ -46,14 +49,7 @@ public class StreamPath {
     }
 
     @SuppressWarnings("DuplicateThrows")
-    public StreamPathResult evaluate(DocumentSet documentSet, final Set<String> expressions)
-            throws IOException, InvalidExpressionException, InvalidDocumentException, StreamPathException
-    {
-        return evaluate(documentSet, expressions, false);
-    }
-
-    @SuppressWarnings("DuplicateThrows")
-    public StreamPathResult evaluate(DocumentSet documentSet, Set<String> expressions, boolean verbose)
+    public StreamPathResult evaluateStrings(DocumentSet documentSet, Set<String> expressions)
             throws IOException, InvalidExpressionException, InvalidDocumentException, StreamPathException
     {
         BiMap<String, Expression<?>> compiledExpressions = compile(expressions);
