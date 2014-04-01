@@ -111,8 +111,13 @@ public abstract class ImplicitCast<T> implements Expression<T> {
     }
 
     @Override
-    public String toString() {
+    public String toVerboseString() {
         return "ImplicitCast<" + type + ">{ " + operand + " }";
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(operand);
     }
 
     public static class ImplicitNumericCast extends ImplicitCast<BigDecimal> {

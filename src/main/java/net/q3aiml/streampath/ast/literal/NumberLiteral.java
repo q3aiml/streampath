@@ -37,6 +37,6 @@ public class NumberLiteral extends Literal<BigDecimal> {
 
     @Override
     public String toString() {
-        return "Literal{" + value + "}";
+        return value.toPlainString();
     }
 }

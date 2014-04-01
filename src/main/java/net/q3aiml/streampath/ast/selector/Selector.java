@@ -53,6 +53,11 @@ public class Selector implements Expression<Object>, SelectorBase {
     }
 
     @Override
+    public String toVerboseString() {
+        return toString();
+    }
+
+    @Override
     public String toString() {
         return (documentSelector != null ? documentSelector + "::" : "" ) + valueSelector;
     }

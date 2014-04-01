@@ -52,6 +52,11 @@ public class ArithmeticExpression implements Expression<BigDecimal> {
     }
 
     @Override
+    public String toVerboseString() {
+        return toString();
+    }
+
+    @Override
     public String toString() {
         return left + " " + operation + " " + right;
     }

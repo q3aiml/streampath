@@ -10,4 +10,9 @@ import net.q3aiml.streampath.ast.Expression;
     public Class<Boolean> getValueType() {
         return Boolean.class;
     }
+
+    @Override
+    public String toVerboseString() {
+        return toString();
+    }
 }

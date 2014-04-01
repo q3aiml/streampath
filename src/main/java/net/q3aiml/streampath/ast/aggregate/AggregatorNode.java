@@ -20,4 +20,9 @@ public abstract class AggregatorNode<T> implements Expression<T> {
         }
         return value;
     }
+
+    @Override
+    public String toVerboseString() {
+        return toString();
+    }
 }

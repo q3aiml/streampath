@@ -28,4 +28,9 @@ public abstract class Literal<T> implements Expression<T> {
      * The value of this literal as a string without any quoting.
      */
     public abstract String asString();
+
+    @Override
+    public String toVerboseString() {
+        return "Literal{" + toString() + "}";
+    }
 }
