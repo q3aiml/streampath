@@ -8,7 +8,12 @@ public class InvalidDocumentException extends StreamPathException {
     private final Document document;
 
     public InvalidDocumentException(Document document, Throwable cause) {
-        super(cause);
+        super("document " + document + " was not in the expected format", cause);
+        this.document = document;
+    }
+
+    public InvalidDocumentException(String message, Document document, Throwable cause) {
+        super(message, cause);
         this.document = document;
     }
 

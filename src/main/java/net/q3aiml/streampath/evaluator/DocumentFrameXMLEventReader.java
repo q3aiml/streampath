@@ -67,7 +67,8 @@ public class DocumentFrameXMLEventReader {
                 try {
                     event = reader.nextEvent();
                 } catch (XMLStreamException e) {
-                    throw new RuntimeException(new InvalidDocumentException(document, e));
+                    throw new RuntimeException(new InvalidDocumentException(
+                            "document " + document + " was not XML as expected", document, e));
                 }
 
                 if (event.isStartElement()) {
