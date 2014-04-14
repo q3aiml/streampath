@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -48,15 +49,17 @@ public class StreamPath {
     }
 
     @SuppressWarnings("DuplicateThrows")
-    public StreamPathResult evaluateStrings(DocumentSet documentSet, Set<String> expressions)
+    public StreamPathResult evaluateStrings(DocumentSet documentSet, Set<String> expressions,
+                                               StreamPathOptions... options)
             throws IOException, InvalidExpressionException, InvalidDocumentException, StreamPathException
     {
-        return evaluate(documentSet, compile(expressions));
+        return evaluate(documentSet, compile(expressions), options);
     }
 
     @SuppressWarnings("DuplicateThrows")
-    public StreamPathResult evaluate(DocumentSet documentSet, Set<StreamPathExpression> compiledExpressions)
-            throws IOException, InvalidExpressionException, InvalidDocumentException, StreamPathException
+    public StreamPathResult evaluate(DocumentSet documentSet, Set<StreamPathExpression> compiledExpressions,
+                                     StreamPathOptions... options)
+            throws IOException, InvalidDocumentException, StreamPathException
     {
         ImmutableSet.Builder<Expression<?>> internalExpressionsBuilder = ImmutableSet.builder();
         ImmutableBiMap.Builder<String, Expression<?>> expressionsMap = ImmutableBiMap.builder();
@@ -69,7 +72,7 @@ public class StreamPath {
         Evaluator evaluator = new Evaluator(documentSet, internalExpressions);
         final EvaluationResult result;
         try {
-            result = evaluator.evaluate(verbose);
+            result = evaluator.evaluate(verbose || Arrays.asList(options).contains(StreamPathOptions.VERBOSE));
         } catch (RuntimeException e) {
             Throwable cause = e.getCause();
             if (cause instanceof StreamPathException) {
