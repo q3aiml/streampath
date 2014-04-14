@@ -24,6 +24,14 @@ public abstract class StreamPathResult {
         return Objects.toString(result);
     }
 
+    public String resultAsString(String expression, String defaultValue) {
+        if (expressions().contains(expression)) {
+            return resultAsString(expression);
+        } else {
+            return defaultValue;
+        }
+    }
+
     /**
      * @throws java.lang.ArithmeticException if the result of {@param expression} can not be represented as an int
      */
