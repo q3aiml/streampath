@@ -49,7 +49,7 @@ public class StreamPath {
     }
 
     @SuppressWarnings("DuplicateThrows")
-    public StreamPathResult evaluateStrings(DocumentSet documentSet, Set<String> expressions,
+    public StreamPathResult compileAndEvaluate(DocumentSet documentSet, Set<String> expressions,
                                                StreamPathOptions... options)
             throws IOException, InvalidExpressionException, InvalidDocumentException, StreamPathException
     {

@@ -21,7 +21,7 @@ public abstract class ExpressionTestBase {
 
     public Object eval(String expression, DocumentSet documentSet) throws StreamPathException, IOException {
         StreamPathResult results = new StreamPath()
-                .evaluate(documentSet, ImmutableSet.of(expression));
+                .compileAndEvaluate(documentSet, ImmutableSet.of(expression));
         final Object result = results.result(expression);
         System.out.println("evaluator value! " + expression + " -> " + result);
         System.out.println();

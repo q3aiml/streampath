@@ -42,7 +42,7 @@ public class ParserCliTester {
             System.out.println(parseTreePrintOut);
             StreamPathResult value = null;
             try {
-                value = new StreamPath().evaluate(DocumentSets.empty(), ImmutableSet.of(input));
+                value = new StreamPath().compileAndEvaluate(DocumentSets.empty(), ImmutableSet.of(input));
             } catch (StreamPathException e) {
                 e.printStackTrace();
             }
