@@ -32,6 +32,10 @@ public class DocumentSets {
         return new DocumentSetBuilder();
     }
 
+    public static DocumentSet copyOf(Set<Document> documents) {
+        return new ImmutableDocumentSet(ImmutableSet.copyOf(documents));
+    }
+
     public static DocumentSet ofSource(Source currentDocument) {
         return create().add(null, currentDocument).build();
     }
