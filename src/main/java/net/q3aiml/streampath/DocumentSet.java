@@ -9,12 +9,7 @@ import java.util.Set;
  */
 public interface DocumentSet extends Closeable {
     /**
-     * The default document that expressions refer to if they do not explicitly refer to a document.
-     */
-    public Document currentDocument();
-
-    /**
-     * All documents including {@link #currentDocument()}.
+     * All documents in the set.
      */
     public Set<Document> documents();
 

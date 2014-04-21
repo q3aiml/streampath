@@ -18,39 +18,29 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class DocumentSets {
 
     private static final ImmutableDocumentSet EMPTY_DOCUMENT_SET
-            = new ImmutableDocumentSet(null, ImmutableSet.<Document>of());
+            = new ImmutableDocumentSet(ImmutableSet.<Document>of());
 
     public static DocumentSet empty() {
         return EMPTY_DOCUMENT_SET;
     }
 
-    public static DocumentSetBuilder create(Source currentDocument) {
-        return new DocumentSetBuilder(currentDocument);
+    public static DocumentSetBuilder create() {
+        return new DocumentSetBuilder();
     }
 
     public static DocumentSet ofSource(Source currentDocument) {
-        return create(currentDocument).build();
+        return create().add(null, currentDocument).build();
     }
 
     private static class ImmutableDocumentSet implements DocumentSet {
-        private final Document currentDocument;
-        private final ImmutableSet<Document> allDocuments;
+        private final ImmutableSet<Document> documents;
 
-        public ImmutableDocumentSet(Document currentDocument, ImmutableSet<Document> allDocuments) {
-            if (currentDocument != null && !allDocuments.contains(currentDocument)) {
-                throw new IllegalArgumentException("allDocuments must contain currentDocument");
-            }
-
-            this.currentDocument = currentDocument;
-            this.allDocuments = allDocuments;
-        }
-
-        public Document currentDocument() {
-            return currentDocument;
+        public ImmutableDocumentSet(ImmutableSet<Document> documents) {
+            this.documents = documents;
         }
 
         public Set<Document> documents() {
-            return allDocuments;
+            return documents;
         }
 
         @Override
@@ -86,13 +76,9 @@ public class DocumentSets {
     }
 
     public static class DocumentSetBuilder {
-        private final Document currentDocument;
         private final ImmutableSet.Builder<Document> documents = ImmutableSet.builder();
 
-        private DocumentSetBuilder(Source currentDocumentSource) {
-            currentDocument = new StreamDocument(null, currentDocumentSource);
-            documents.add(currentDocument);
-        }
+        private DocumentSetBuilder() { }
 
         public DocumentSetBuilder add(String identifier, Source source) {
             documents.add(new StreamDocument(identifier, source));
@@ -100,7 +86,7 @@ public class DocumentSets {
         }
 
         public DocumentSet build() {
-            return new ImmutableDocumentSet(currentDocument, documents.build());
+            return new ImmutableDocumentSet(documents.build());
         }
     }
 }

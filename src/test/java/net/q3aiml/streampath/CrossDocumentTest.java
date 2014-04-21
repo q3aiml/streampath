@@ -34,7 +34,8 @@ public class CrossDocumentTest extends ExpressionTestBase {
     }
 
     public DocumentSet testDocumentSet() {
-        return DocumentSets.create(doc1())
+        return DocumentSets.create()
+                .add(null, doc1())
                 .add("other", doc2())
                 .build();
     }
