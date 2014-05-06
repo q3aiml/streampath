@@ -25,6 +25,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * Main public API for external expression compilation and evaluation.
  * @author ajclayton
  */
 public class StreamPath {

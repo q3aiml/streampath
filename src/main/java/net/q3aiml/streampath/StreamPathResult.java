@@ -8,7 +8,9 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
+ * The result of a streampath evaluation.
  * @author ajclayton
+ * @see net.q3aiml.streampath.StreamPath
  */
 public abstract class StreamPathResult {
     /**

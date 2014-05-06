@@ -22,6 +22,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
+ * Aggregates values (mainly from {@link net.q3aiml.streampath.ast.aggregate.AggregatorNode}s), storing their
+ * running state.
+ * <p/>
  *               _  _
  *     _ _      (0)(0)-._  _.-'^^'^^'^^'^^'^^'--.
  *    (.(.)----'`        ^^'                /^   ^^-._

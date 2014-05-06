@@ -39,6 +39,7 @@ public class Evaluator {
     public EvaluationResult evaluate(boolean verbose) throws IOException {
         Map<Expression<?>, Object> expressionValues = new HashMap<Expression<?>, Object>();
 
+        // first process all the document data as frames, building up aggregate values in the aggregator3000
         for (Document document : referencedDocuments()) {
             Iterable<Frame> frames;
             try {
@@ -52,6 +53,7 @@ public class Evaluator {
             }
         }
 
+        // and evaluate all the expressions to a single value, using any aggregate values built up in the aggregator3000
         for (Expression<?> expression : expressions) {
             Object value = evaluate(null, expression, verbose ? expressionValues : null);
             expressionValues.put(expression, value);

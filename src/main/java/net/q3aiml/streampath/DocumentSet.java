@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Set;
 
 /**
+ * Provides zero or more documents for streampath evaluation.
  * @author q3aiml
  */
 public interface DocumentSet extends Closeable {

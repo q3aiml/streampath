@@ -27,6 +27,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Generates
+ * <p/>
+ * For details of how the stack (push, pop) is used to create the AST read parboiled's
+ * "<a href="https://github.com/sirthias/parboiled/wiki/Working-with-the-Value-Stack">working with the value stack</a>",
+ * but in summary:
+ * <ul>
+ *  <li>Rules are stable (consistent) regardless of input: if a rule adds one value for a certain input, it must
+ *      always add one value regardless of input. Otherwise referencing rules cannot make correct assumptions
+ *      about the state of the stack.</li>
+ *  <li>Generally rules add at most one value to the stack. Higher level rules may combine multiple lower level
+ *      rules and combine their stack additions, replacing them with their higher level object. For example "2 > 1"
+ *      would likely combine the literal objects for "2" and "1" under a "greater than" object.</li>
+ * </ul>
  * @author q3aiml
  */
 @BuildParseTree

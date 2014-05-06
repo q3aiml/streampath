@@ -16,9 +16,10 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * Utilities for creating a {@link net.q3aiml.streampath.DocumentSet}.
  * @author q3aiml
  */
-public class DocumentSets {
+public final class DocumentSets {
     private static final Logger log = LoggerFactory.getLogger(DocumentSets.class);
 
     private static final ImmutableDocumentSet EMPTY_DOCUMENT_SET
